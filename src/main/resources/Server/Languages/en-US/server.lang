@@ -1,0 +1,5 @@
+commands.averageessentials.plugins.list.base=Display the Hytale base plugins
+commands.averageessentials.gm.desc=The base group manager command
+commands.averageessentials.gm.prefix.desc=Manage group prefixes
+commands.averageessentials.gm.prefix.prefix_arg.desc=The prefix to set
+commands.averageessentials.gm.prefix.applied.msg=Applied the prefix '{prefix}' to group {group}

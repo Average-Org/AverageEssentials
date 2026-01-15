@@ -1,0 +1,18 @@
+{
+  "Group": "Average",
+  "Name": "Essentials",
+  "Version": "0.0.1",
+  "Description": "A set of essential commands and tools for Hytale servers.",
+  "Authors": [
+    {
+      "Name": "Average (js3 on Hytale)"
+    }
+  ],
+  "Website": "https://github.com/RenderBr/",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true,
+  "Main": "github.renderbr.hytale.AverageEssentials"
+}
