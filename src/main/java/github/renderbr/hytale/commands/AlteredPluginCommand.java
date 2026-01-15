@@ -60,7 +60,7 @@ public class AlteredPluginCommand extends AbstractCommandCollection {
         public PluginListCommand() {
             super("list", "server.commands.plugin.list.desc");
             this.displayBasePlugins = this.withFlagArg("display-base", "server.commands.averageessentials.plugins.list.base");
-            this.addAliases(new String[]{"ls"});
+            this.addAliases("ls");
         }
 
         protected void executeSync(@Nonnull CommandContext context) {

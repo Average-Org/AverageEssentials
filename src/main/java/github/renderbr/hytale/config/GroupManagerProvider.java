@@ -4,9 +4,10 @@ import com.google.gson.*;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.util.io.BlockingDiskFile;
 import github.renderbr.hytale.config.obj.GroupConfigObject;
-import github.renderbr.hytale.util.PathUtils;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import util.ColorUtils;
+import util.PathUtils;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -15,8 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static github.renderbr.hytale.util.ColorUtils.parseColorCodes;
 
 public final class GroupManagerProvider extends BlockingDiskFile {
     @Nonnull
@@ -34,7 +33,7 @@ public final class GroupManagerProvider extends BlockingDiskFile {
     public static HashMap<String, Message> computedPrefixes = new HashMap<>();
 
     public GroupManagerProvider() {
-        super(PathUtils.getPathForConfig("groups.json"));
+        super(util.PathUtils.getPathForConfig("groups.json"));
         var path = PathUtils.getPathForConfig("groups.json");
         PathUtils.initializeAndEnsurePathing(path, this);
     }
@@ -48,7 +47,7 @@ public final class GroupManagerProvider extends BlockingDiskFile {
         }
 
         // This handles the &4 -> Red, &b -> Aqua logic
-        return parseColorCodes(rawPrefix);
+        return ColorUtils.parseColorCodes(rawPrefix);
     }
 
     public Pair<String, GroupConfigObject> getHighestWeightedGroup(Set<String> groups) {
@@ -88,7 +87,7 @@ public final class GroupManagerProvider extends BlockingDiskFile {
             if (prefix.isEmpty()) {
                 computedPrefixes.put(groupName, Message.empty());
             } else {
-                computedPrefixes.put(groupName, parseColorCodes(prefix));
+                computedPrefixes.put(groupName, ColorUtils.parseColorCodes(prefix));
             }
 
             this.syncSave();

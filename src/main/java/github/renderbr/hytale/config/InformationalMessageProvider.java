@@ -8,8 +8,8 @@ import com.hypixel.hytale.server.core.util.io.BlockingDiskFile;
 import github.renderbr.hytale.commands.BasicOutputCommand;
 import github.renderbr.hytale.config.obj.InformationalMessageConfiguration;
 import github.renderbr.hytale.registries.CommandRegistry;
-import github.renderbr.hytale.util.ColorUtils;
-import github.renderbr.hytale.util.PathUtils;
+import util.ColorUtils;
+import util.PathUtils;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -38,7 +38,6 @@ public final class InformationalMessageProvider extends BlockingDiskFile {
         registerDynamicInformationMessageCommands();
 
         // start timer
-
         messageQueue.addAll(config.occasionalBroadcasts);
         broadcastTimer = scheduler.scheduleAtFixedRate(this::doBroadcast, config.broadcastFrequencyInSeconds, config.broadcastFrequencyInSeconds, TimeUnit.SECONDS);
     }

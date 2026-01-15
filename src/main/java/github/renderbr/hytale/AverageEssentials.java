@@ -7,6 +7,7 @@ import github.renderbr.hytale.registries.CommandRegistry;
 import github.renderbr.hytale.registries.ListenerRegistry;
 import github.renderbr.hytale.registries.ProviderRegistry;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import util.PathUtils;
 
 public class AverageEssentials extends JavaPlugin {
 
@@ -16,8 +17,15 @@ public class AverageEssentials extends JavaPlugin {
 
     @Override
     protected void setup() {
+        PathUtils.setModDirectoryName("AverageEssentials");
+
         CommandRegistry.registerCommands(this.getCommandRegistry());
         ProviderRegistry.registerProviders();
-        ListenerRegistry.registerListeners(this.getEventRegistry());
+
+        try {
+            ListenerRegistry.registerListeners(this.getEventRegistry());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

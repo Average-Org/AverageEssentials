@@ -14,7 +14,7 @@ public class GroupManagerCommand extends AbstractCommandCollection {
 
     public GroupManagerCommand() {
         super("groupmanager", "server.commands.averageessentials.gm.desc");
-        this.addAliases("gm", "agm", "groupman");
+        this.addAliases("agm", "groupman");
         this.addSubCommand(new PrefixSubCommand());
     }
 
