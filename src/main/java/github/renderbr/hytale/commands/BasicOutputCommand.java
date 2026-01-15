@@ -10,10 +10,8 @@ public class BasicOutputCommand extends CommandBase {
     Message messageToSend;
 
     public BasicOutputCommand(@NonNullDecl String name, @NonNullDecl String description) {
-        var messageToSend = ColorUtils.parseColorCodes(description);
-        super(name, messageToSend.getAnsiMessage());
-
-        this.messageToSend = messageToSend;
+        super(name, ColorUtils.parseColorCodes(description).getAnsiMessage());
+        this.messageToSend = ColorUtils.parseColorCodes(description);
     }
 
     @Override

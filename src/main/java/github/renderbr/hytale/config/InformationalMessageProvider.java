@@ -32,9 +32,8 @@ public final class InformationalMessageProvider extends BlockingDiskFile {
     Queue<String> messageQueue = new java.util.concurrent.ConcurrentLinkedQueue<>();
 
     public InformationalMessageProvider() {
+        super(PathUtils.getPathForConfig("messages.json"));
         var path = PathUtils.getPathForConfig("messages.json");
-        super(path);
-
         PathUtils.initializeAndEnsurePathing(path, this);
         registerDynamicInformationMessageCommands();
 

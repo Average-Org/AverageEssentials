@@ -34,9 +34,8 @@ public final class GroupManagerProvider extends BlockingDiskFile {
     public static HashMap<String, Message> computedPrefixes = new HashMap<>();
 
     public GroupManagerProvider() {
+        super(PathUtils.getPathForConfig("groups.json"));
         var path = PathUtils.getPathForConfig("groups.json");
-        super(path);
-
         PathUtils.initializeAndEnsurePathing(path, this);
     }
 
