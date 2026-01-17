@@ -65,9 +65,18 @@ public class ChatListener {
         var highestWeightedGroup = groupManager.getHighestWeightedGroup(groups);
         var prefix = groupManager.getGroupPrefix(highestWeightedGroup.first());
 
-        event.setFormatter((playerRef, message) -> Message.join(
+        // check if user has nickname
+        var nicknameProvider = ProviderRegistry.nicknameProvider;
+        var displayName = sender.getUsername();
+
+        if (nicknameProvider.hasNickname(sender.getUuid().toString())) {
+            displayName = nicknameProvider.getUserNickname(sender.getUuid().toString());
+        }
+
+        String finalDisplayName = displayName;
+        event.setFormatter((_, message) -> Message.join(
                 prefix,
-                Message.raw(playerRef.getUsername()),
+                Message.raw(finalDisplayName),
                 Message.raw(": "),
                 chatFilterConfigurationProvider.config.allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message) : Message.raw(message)));
     }
@@ -108,7 +117,7 @@ public class ChatListener {
                             disconnectEx.printStackTrace();
                         }
 
-                        if(disconnectReasonMsg.isEmpty()){
+                        if (disconnectReasonMsg.isEmpty()) {
                             disconnectReasonMsg = Optional.of("You have been banned from the server.");
                         }
 

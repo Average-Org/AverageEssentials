@@ -3,6 +3,14 @@ commands.averageessentials.gm.desc=The base group manager command
 commands.averageessentials.gm.prefix.desc=Manage group prefixes
 commands.averageessentials.gm.prefix.prefix_arg.desc=The prefix to set
 commands.averageessentials.gm.prefix.applied.msg=Applied the prefix '{prefix}' to group {group}
+commands.averageessentials.nickname.desc=Set or clear a player's nickname
+commands.averageessentials.nickname.arg.desc=Either your desired nickname, or another player's name. Enter: 'clear' to remove your nickname.
+commands.averageessentials.nickname.arg.other.desc=If you are modifying another player's nickname, specify a nickname for them here (or 'clear' to remove it).
+commands.averageessentials.nickname.playernotfound=Player '{player}' not found.
+commands.averageessentials.nickname.changed=Your nickname has been changed to '{nickname}'.
+commands.averageessentials.nickname.changedother=Changed nickname for player '{player}' to '{nickname}'.
+commands.averageessentials.nickname.cleared=Your nickname has been cleared.
+commands.averageessentials.nickname.clearedother=Cleared nickname for player '{player}'.
 
 averageessentials.ban.forusingbannedword=You have been banned for using a banned word.
 averageessentials.filter.restrictedword=Your message contains a restricted word and cannot be sent.

@@ -3,15 +3,18 @@ package github.renderbr.hytale.registries;
 import github.renderbr.hytale.config.ChatFilterConfigurationProvider;
 import github.renderbr.hytale.config.GroupManagerProvider;
 import github.renderbr.hytale.config.InformationalMessageProvider;
+import github.renderbr.hytale.config.NicknameProvider;
 
 public class ProviderRegistry {
     public static GroupManagerProvider groupManagerProvider;
     public static InformationalMessageProvider informationalMessageProvider;
     public static ChatFilterConfigurationProvider chatFilterConfigurationProvider;
+    public static NicknameProvider nicknameProvider;
 
     public static void registerProviders(){
         groupManagerProvider = new GroupManagerProvider();
         informationalMessageProvider = new InformationalMessageProvider();
         chatFilterConfigurationProvider = new ChatFilterConfigurationProvider();
+        nicknameProvider = new NicknameProvider();
     }
 }
