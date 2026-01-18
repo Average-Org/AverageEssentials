@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.modules.accesscontrol.ban.InfiniteBan;
 import com.hypixel.hytale.server.core.modules.accesscontrol.provider.HytaleBanProvider;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import github.renderbr.hytale.config.ChatFilterConfigurationProvider;
 import github.renderbr.hytale.config.obj.ChatFilterType;
 import github.renderbr.hytale.registries.ProviderRegistry;
 import util.ColorUtils;
@@ -16,6 +17,7 @@ import util.ColorUtils;
 import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -36,28 +38,17 @@ public class ChatListener {
     }
 
     public static void onPlayerChat(PlayerChatEvent event) {
-        // regex for banned terms
         var chatFilterConfigurationProvider = ProviderRegistry.chatFilterConfigurationProvider;
-
-        var bannableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
-
-        var chatContent = event.getContent();
         PlayerRef sender = event.getSender();
-
-        if (handleBannableTerms(event, bannableTerms, chatContent, sender)) return;
-
-        var removableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
-        if (handleRemovableTerms(event, removableTerms, chatContent, sender)) return;
-
-        var censorableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
-
-        for (var regex : censorableTerms) {
-            chatContent = regex.matcher(chatContent).replaceAll("****");
+        if (handleChatFiltering(event, sender, chatFilterConfigurationProvider)) {
+            event.setCancelled(true);
+            return; // return if true, this means the msg should be blocked
         }
 
-        event.setContent(chatContent);
-
-        var groups = PermissionsModule.get().getGroupsForUser(sender.getUuid());
+        var groups = new HashSet<>(PermissionsModule.get().getGroupsForUser(sender.getUuid()));
+        if (groups.stream().noneMatch(c -> c.equals("Default"))) {
+            groups.add("Default");
+        }
 
         var groupManager = ProviderRegistry.groupManagerProvider;
 
@@ -79,6 +70,27 @@ public class ChatListener {
                 Message.raw(finalDisplayName),
                 Message.raw(": "),
                 chatFilterConfigurationProvider.config.allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message) : Message.raw(message)));
+    }
+
+    private static boolean handleChatFiltering(PlayerChatEvent event, PlayerRef sender, ChatFilterConfigurationProvider chatFilterConfigurationProvider) {
+        // regex for banned terms
+        var bannableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
+
+        var chatContent = event.getContent();
+
+        if (handleBannableTerms(event, bannableTerms, chatContent, sender)) return true;
+
+        var removableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
+        if (handleRemovableTerms(event, removableTerms, chatContent, sender)) return true;
+
+        var censorableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
+
+        for (var regex : censorableTerms) {
+            chatContent = regex.matcher(chatContent).replaceAll("****");
+        }
+
+        event.setContent(chatContent);
+        return false;
     }
 
     private static boolean handleRemovableTerms(PlayerChatEvent event, ArrayList<Pattern> removableTerms, String chatContent, PlayerRef sender) {

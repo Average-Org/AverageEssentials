@@ -51,7 +51,7 @@ public final class GroupManagerProvider extends BlockingDiskFile {
     }
 
     public Pair<String, GroupConfigObject> getHighestWeightedGroup(Set<String> groups) {
-        int highestGroupId = 0;
+        int highestGroupId = Integer.MIN_VALUE;
         String highestGroupName = "";
         for (String groupName : groups) {
             GroupConfigObject group = this.groups.get(groupName);
