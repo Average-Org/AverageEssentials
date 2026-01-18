@@ -4,6 +4,7 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractComman
 import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import github.renderbr.hytale.commands.AlteredPluginCommand;
 import github.renderbr.hytale.commands.GroupManagerCommand;
+import github.renderbr.hytale.commands.HomeCommand;
 import github.renderbr.hytale.commands.NicknameCommand;
 
 import java.util.List;
@@ -13,7 +14,8 @@ public class CommandRegistry {
 
     public static final List<AbstractCommandCollection> REGISTERED_COMMANDS_COLLECTIONS = List.of(
             new AlteredPluginCommand(),
-            new GroupManagerCommand()
+            new GroupManagerCommand(),
+            new HomeCommand()
     );
 
     public static final List<CommandBase> REGISTERED_COMMANDS = List.of(

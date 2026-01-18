@@ -30,5 +30,27 @@ All notable changes to AverageEssentials will be documented in this file.
 - Requires Java 8 or higher
 - Shadow JAR packaging for easy deployment
 
----
+## [0.2.0] - 2026-01-18
 
+### Added
+- **Home System** - Complete home management functionality:
+  - `/home set <name>` - Set a home location with custom name
+  - `/home tp <name>` - Teleport to a saved home
+  - `/home list` - Display all saved homes for the player
+  - `/home delete <name>` - Remove a specific home
+  - Permission-based home limits with `averageessentials.homes.limit.<number>` permissions
+  - Configurable default maximum homes (default: 3)
+  - Unlimited homes for operators
+  - SQLite database storage for persistent home data across server restarts
+- **Nickname Management** - Player nickname customization:
+  - `/nickname <nick>` - Set personal nickname (alias: `/nick`)
+  - `/nickname <player> <nick>` - Set nickname for another player (admin only)
+  - `/nickname <player> clear` - Clear a player's nickname
+  - Automatic nickname application on player join
+  - JSON-based storage for nickname persistence
+
+### Features
+- Database integration with SQLite for home storage
+- Permission system integration for home limits and nickname management
+- Automatic configuration file generation for new features
+- Enhanced player utilities for improved gameplay experience

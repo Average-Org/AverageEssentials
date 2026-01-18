@@ -19,6 +19,10 @@
 - **Group Management**: Allows administrators to set and manage prefixes for permission groups, stored in configurable JSON files.
 - **Informational Messages**: Supports welcome messages for new players, periodic broadcasts to all online players, and dynamic commands for quick information dissemination (e.g., Discord links).
 
+### Player Utilities
+- **Home System**: Allows players to set, teleport to, list, and delete personal home locations with configurable limits based on permissions. Supports unlimited homes for operators.
+- **Nickname Management**: Enables players and administrators to set custom nicknames, with support for clearing nicknames back to default usernames.
+
 ## Requirements
 
 - Hytale Server (compatible with core APIs for events, permissions, commands, and messaging)
@@ -30,7 +34,7 @@
 1. Download the latest release JAR from the releases section.
 2. Place the JAR file in your server's plugins directory.
 3. Restart the server to load the plugin.
-4. Configure groups, messages, and broadcasts via the generated JSON config files in `mods/AverageEssentials/`.
+4. Configure groups, messages, broadcasts, home limits, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
 
 ## Configuration
 
@@ -94,8 +98,35 @@ Configure permission group prefixes for chat formatting:
 - **`weight`**: Determines priority when a player has multiple groups. Higher weight = higher priority in chat display.
 - **`prefix`**: The text displayed before the player's name in chat, supporting color codes.
 
-## Building from Source
+### Home Configuration (`homes.json`)
 
-Clone the repository and run `./gradlew build` to compile the plugin.
+Configure default home limits for players:
 
-For more details, visit the project repository or report issues on GitHub.
+```json
+{
+  "defaultMaxHomes": 3
+}
+```
+
+**Configuration Options:**
+
+- **`defaultMaxHomes`** (Integer): The default maximum number of homes a player can set. This can be overridden by permissions (e.g., `averageessentials.homes.limit.5` for 5 homes). Operators have unlimited homes by default. Default: `3`
+
+### Nickname Configuration (`nicknames.json`)
+
+Stores player nicknames (automatically managed, no manual editing required):
+
+```json
+{
+  "nicknames": {
+    "player-uuid-1": "CoolNick",
+    "player-uuid-2": "AnotherNick"
+  }
+}
+```
+
+**Notes:**
+
+- Nicknames are stored as a map of player UUIDs to their custom nicknames.
+- This file is automatically updated when nicknames are set or cleared.
+- Manual editing is not recommended as it may cause inconsistencies.
