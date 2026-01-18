@@ -11,6 +11,8 @@ commands.averageessentials.nickname.changed=Your nickname has been changed to '{
 commands.averageessentials.nickname.changedother=Changed nickname for player '{player}' to '{nickname}'.
 commands.averageessentials.nickname.cleared=Your nickname has been cleared.
 commands.averageessentials.nickname.clearedother=Cleared nickname for player '{player}'.
+commands.averageessentials.home.desc=Manage and teleport to your homes
 
 averageessentials.ban.forusingbannedword=You have been banned for using a banned word.
 averageessentials.filter.restrictedword=Your message contains a restricted word and cannot be sent.
+averageessentials.err.somethingwentwrong=Something went wrong. Please contact an administrator.
