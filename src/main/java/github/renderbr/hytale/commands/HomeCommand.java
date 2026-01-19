@@ -91,6 +91,7 @@ public class HomeCommand extends AbstractCommandCollection {
                 }
 
                 var player = Universe.get().getPlayer(playerUuid);
+                var currentWorld = Universe.get().getWorld(player.getWorldUuid());
 
                 var world = Universe.get().getWorld(UUID.fromString(home.worldUuid));
 
@@ -103,11 +104,12 @@ public class HomeCommand extends AbstractCommandCollection {
                     return;
                 }
 
-                world.execute(() -> {
+                assert currentWorld != null;
+                currentWorld.execute(() -> {
                     if(player.getReference() == null) return;
 
                     var store = player.getReference().getStore();
-                    var tp = new Teleport(home.getPosition(), home.getHeadRotation());
+                    var tp = new Teleport(world, home.getPosition(), home.getHeadRotation());
                     store.addComponent(player.getReference(), Teleport.getComponentType(), tp);
                 });
 
