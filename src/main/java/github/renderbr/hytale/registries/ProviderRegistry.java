@@ -8,6 +8,7 @@ public class ProviderRegistry {
     public static ChatFilterConfigurationProvider chatFilterConfigurationProvider;
     public static NicknameProvider nicknameProvider;
     public static HomeProvider homeProvider;
+    public static RegionProvider regionProvider;
 
     public static void registerProviders(){
         groupManagerProvider = new GroupManagerProvider();
@@ -15,5 +16,6 @@ public class ProviderRegistry {
         chatFilterConfigurationProvider = new ChatFilterConfigurationProvider();
         nicknameProvider = new NicknameProvider();
         homeProvider = new HomeProvider();
+        regionProvider = new RegionProvider();
     }
 }

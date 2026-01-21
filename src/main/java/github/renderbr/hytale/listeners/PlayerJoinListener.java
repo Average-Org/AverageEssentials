@@ -4,8 +4,13 @@ import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import github.renderbr.hytale.db.models.regions.PlayerRegionCommandData;
+import github.renderbr.hytale.db.models.regions.service.RegionService;
 import github.renderbr.hytale.registries.ProviderRegistry;
+import github.renderbr.hytale.service.RegionBoundaryService;
 import util.ColorUtils;
+
+import java.sql.SQLException;
 
 public class PlayerJoinListener {
     public static void register(EventRegistry eventRegistry) {
@@ -30,6 +35,17 @@ public class PlayerJoinListener {
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        PlayerRegionCommandData playerSettings = null;
+        try {
+            playerSettings = RegionService.getInstance().getRegionCommandData(event.getPlayerRef().getUuid().toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (playerSettings != null && playerSettings.viewRegionBorders) {
+            RegionBoundaryService.getInstance().addTrackedPlayer(event.getPlayerRef().getUuid());
         }
     }
 }

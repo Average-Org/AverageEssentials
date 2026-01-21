@@ -1,3 +1,7 @@
+[![Get quality hosting!](https://i.imgur.com/4rIaoNo.jpeg)](https://billing.kinetichosting.com/aff.php?aff=1261)
+
+> **[Kinetic Hosting](https://billing.kinetichosting.com/aff.php?aff=1261):** Check out my game hosting partner! They offer fast, affordable hosting with excellent customer support!
+
 # AverageEssentials
 
 **AverageEssentials** is a lightweight Java plugin for Hytale servers, built with Gradle, designed to enhance core server functionality with essential tools for player management, communication, and administration.
@@ -22,6 +26,12 @@
 ### Player Utilities
 - **Home System**: Allows players to set, teleport to, list, and delete personal home locations with configurable limits based on permissions. Supports unlimited homes for operators.
 - **Nickname Management**: Enables players and administrators to set custom nicknames, with support for clearing nicknames back to default usernames.
+- **Region Management**: Advanced region claiming and management system:
+  - Claim and manage land regions with precise block-level controls
+  - Safe teleportation within claimed regions
+  - Configurable interaction permissions (block break, place, interact)
+  - Region boundary visualization and management
+  - Supports region sharing and collaborative land management
 
 ## Requirements
 

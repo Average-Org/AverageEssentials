@@ -27,6 +27,123 @@ commands.averageessentials.home.set.maxhomes=You have reached the maximum number
 commands.averageessentials.home.delete.notfound=Home '{home}' not found.
 commands.averageessentials.home.delete.success=Home '{home}' has been deleted successfully.
 
+# Region Command Base
+commands.averageessentials.region.desc=Manage player regions and land claims
+
+# Region List
+commands.averageessentials.region.list.desc=List all regions you own
+commands.averageessentials.region.list.page.desc=The page number to view
+commands.averageessentials.region.list.header=--- Your Regions (Page {currentPage}/{totalPages}) ---
+commands.averageessentials.region.list.noregions=You don't own any regions yet.
+commands.averageessentials.region.list.entry= - {region} ({chunks} chunks)
+commands.averageessentials.region.list.listall=List all regions on the server, including those you do not own.
+commands.averageessentials.region.list.nopermission=You do not have permission to list all regions.
+
+# Region Select/Target
+commands.averageessentials.region.target.desc=Select a region to work with
+commands.averageessentials.region.target.arg.desc=The name of the region to select
+commands.averageessentials.region.target.notfound=Could not find a region with that name.
+commands.averageessentials.region.target.success=Successfully selected region: {region}
+
+# Region Create
+commands.averageessentials.region.create.desc=Create a new region group
+commands.averageessentials.region.create.arg.desc=The name for your new region
+commands.averageessentials.region.create.alreadyexists=A region with that name already exists!
+commands.averageessentials.region.create.success=Created new region: {region}
+commands.averageessentials.region.create.limitreached=You have reached the maximum number of regions allowed.
+
+# Region Claim
+commands.averageessentials.region.claim.desc=Claim the current area for your selected region
+commands.averageessentials.region.claim.failure=Cannot claim here; this area intersects with another region!
+commands.averageessentials.region.claim.success=Area claimed successfully!
+commands.averageessentials.region.claim.blocklimit=This claim is too big! It requires {requestedBlocks} blocks, but you only have {maxBlocks} total capacity ({currentBlocks} already used).
+commands.averageessentials.region.unclaim.desc=Unclaim the chunk you are standing in
+commands.averageessentials.region.unclaim.notfound=This area is not claimed.
+commands.averageessentials.region.unclaim.success=Chunk successfully unclaimed.
+commands.averageessentials.region.unclaimall.desc=Delete the selected region and all claims
+commands.averageessentials.region.unclaimall.noselected=You have no region selected.
+commands.averageessentials.region.unclaimall.success=Region and all claims removed.
+
+
+# Region Flag
+commands.averageessentials.region.flag.desc=Set flags on the selected region
+commands.averageessentials.region.flag.type.desc=The flag type to modify
+commands.averageessentials.region.flag.value.desc=The value to set for the flag
+commands.averageessentials.region.flag.noselected=You have no region selected.
+commands.averageessentials.region.flag.invalidflag=That flag type is invalid.
+commands.averageessentials.region.flag.success=Set flag '{flag}' to {value}.
+
+# Region View
+commands.averageessentials.region.view.desc=Toggle region border visualization
+commands.averageessentials.region.view.nocommanddata=No region command data found.
+commands.averageessentials.region.view.viewing=Now viewing region boundaries.
+commands.averageessentials.region.view.notviewing=Stopped viewing region boundaries.
+
+# Region Limit
+commands.averageessentials.region.limit.desc=Set the maximum number of blocks for a region
+commands.averageessentials.region.limit.blocks.desc=The maximum block count
+commands.averageessentials.region.limit.noselected=You have no region selected.
+commands.averageessentials.region.limit.success=Region block limit set to {blocks}.
+
+# Region Rename
+commands.averageessentials.region.rename.desc=Rename the selected region
+commands.averageessentials.region.rename.name.desc=The new name for the region
+commands.averageessentials.region.rename.noselected=You have no region selected.
+commands.averageessentials.region.rename.exists=A region with that name already exists.
+commands.averageessentials.region.rename.success=Renamed region '{oldName}' to '{newName}'.
+
+# Region Share
+commands.averageessentials.region.share.desc=Share your region with another player
+commands.averageessentials.region.share.player.desc=The player to share with
+commands.averageessentials.region.share.noselected=You have no region selected.
+commands.averageessentials.region.share.playernotfound=That player could not be found.
+commands.averageessentials.region.share.success=Region shared with {player}.
+commands.averageessentials.region.unshare.desc=Remove a player's access to your region
+commands.averageessentials.region.unshare.player.desc=The player to remove
+commands.averageessentials.region.unshare.noselected=You have no region selected.
+commands.averageessentials.region.unshare.playernotfound=That player could not be found.
+commands.averageessentials.region.unshare.success=Region access removed from {player}.
+
+# Region Tp
+commands.averageessentials.region.tp.desc=Teleport to one of your regions
+commands.averageessentials.region.tp.name.desc=The region name
+commands.averageessentials.region.tp.notfound=That region does not exist.
+commands.averageessentials.region.tp.nochunks=That region has no claimed chunks.
+commands.averageessentials.region.tp.success=Teleported to region '{region}'.
+
+# Region Welcome/Leave Messages
+commands.averageessentials.region.welcomemsg.desc=Set a welcome message for the region
+commands.averageessentials.region.welcomemsg.message.desc=The welcome message
+commands.averageessentials.region.welcomemsg.noselected=You have no region selected.
+commands.averageessentials.region.welcomemsg.success=Welcome message updated.
+commands.averageessentials.region.leavemsg.desc=Set a leave message for the region
+commands.averageessentials.region.leavemsg.message.desc=The leave message
+commands.averageessentials.region.leavemsg.noselected=You have no region selected.
+commands.averageessentials.region.leavemsg.success=Leave message updated.
+
+# Region Description
+commands.averageessentials.region.desc.desc=Set a description for the selected region
+commands.averageessentials.region.desc.description.desc=The region description
+commands.averageessentials.region.desc.noselected=You have no region selected.
+commands.averageessentials.region.desc.success=Region description updated.
+
+# Region Color
+commands.averageessentials.region.color.desc=Set the boundary color for the region
+commands.averageessentials.region.color.color.desc=The boundary color
+commands.averageessentials.region.color.noselected=You have no region selected.
+commands.averageessentials.region.color.success=Region boundary color updated.
+
+# Region Map
+commands.averageessentials.region.map.desc=View all regions on the server
+commands.averageessentials.region.map.page.desc=The page number
+commands.averageessentials.region.map.header=--- Regions (Page {currentPage}/{totalPages}) ---
+commands.averageessentials.region.map.noregions=There are no regions on the server.
+commands.averageessentials.region.map.entry= - {region} (Owner: {owner}, {chunks} chunks)
+
+commands.averageessentials.broadcast.desc=Broadcast a message to all players
+commands.averageessentials.broadcast.arg.desc=The message to broadcast
+commands.averageessentials.broadcast.success=Successfully broadcasted your message.
+
 averageessentials.ban.forusingbannedword=You have been banned for using a banned word.
 averageessentials.filter.restrictedword=Your message contains a restricted word and cannot be sent.
 averageessentials.err.somethingwentwrong=Something went wrong. Please contact an administrator.
