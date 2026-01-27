@@ -4,17 +4,20 @@ plugins {
 }
 
 group = "github.renderbr.hytale"
-version = "0.2.6"
+version = "0.2.7"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://maven.hytale.com/release")
+    }
 }
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    compileOnly(files("libs/HytaleServer.jar"))
+    compileOnly("com.hypixel.hytale:Server:2026.01.27-734d39026")
     implementation(files("libs/AverageHytaleCore.jar"))
 }
 

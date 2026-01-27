@@ -29,4 +29,5 @@ public class ChatFilterConfiguration {
     public String[] termsToCensor = new String[]{};
     public String[] termsToDisable = new String[]{};
     public boolean allowUsersToUseChatColorCodes = true;
+    public boolean allowUsersToEmbedLinks = false;
 }

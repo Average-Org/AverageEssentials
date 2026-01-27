@@ -65,11 +65,14 @@ public class ChatListener {
         }
 
         String finalDisplayName = displayName;
+
+        boolean shouldEmbedLinks = chatFilterConfigurationProvider.config.allowUsersToEmbedLinks || PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
+
         event.setFormatter((_, message) -> Message.join(
                 prefix,
                 Message.raw(finalDisplayName),
                 Message.raw(": "),
-                chatFilterConfigurationProvider.config.allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message) : Message.raw(message)));
+                chatFilterConfigurationProvider.config.allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message, shouldEmbedLinks) : Message.raw(message)));
     }
 
     private static boolean handleChatFiltering(PlayerChatEvent event, PlayerRef sender, ChatFilterConfigurationProvider chatFilterConfigurationProvider) {

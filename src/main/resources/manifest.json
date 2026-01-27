@@ -1,7 +1,7 @@
 {
   "Group": "Average",
   "Name": "Essentials",
-  "Version": "0.2.6",
+  "Version": "0.2.7",
   "Description": "A set of essential commands and tools for Hytale servers.",
   "Authors": [
     {

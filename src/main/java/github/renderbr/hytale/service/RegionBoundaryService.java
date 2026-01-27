@@ -66,6 +66,14 @@ public class RegionBoundaryService {
 
     public static void tryRenderRegionsForPlayer(PlayerRef playerRef) throws SQLException {
 
+        if(!playerRef.isValid()){
+            return;
+        }
+
+        if(playerRef.getWorldUuid() == null){
+            return;
+        }
+
         // get regions within 6 chunks
         var regions = RegionService.getInstance().getRegionsInRange(
                 playerRef.getTransform().getPosition(),
