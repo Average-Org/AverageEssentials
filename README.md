@@ -35,16 +35,21 @@
 
 ## Requirements
 
-- Hytale Server (compatible with core APIs for events, permissions, commands, and messaging)
+- Hytale Server (latest API version)
 - Java 8 or higher
 - Gradle for building (included in the project)
 
 ## Installation
 
-1. Download the latest release JAR from the releases section.
+1. Download the latest release JAR (version 0.2.7) from the releases section.
 2. Place the JAR file in your server's plugins directory.
 3. Restart the server to load the plugin.
-4. Configure groups, messages, broadcasts, home limits, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
+4. Configure groups, messages, broadcasts, home limits, link embedding, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
+
+### New in v0.2.7
+- Link embedding option with configurable preview settings
+- Updated Hytale Server dependency compatibility
+- Improved home and chat system functionality
 
 ## Configuration
 
