@@ -28,6 +28,7 @@ import github.renderbr.hytale.db.models.regions.param.RegionZone;
 import github.renderbr.hytale.db.models.regions.service.RegionService;
 import github.renderbr.hytale.service.RegionBoundaryService;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import util.CommandUtils;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -39,23 +40,27 @@ public class RegionCommand extends AbstractCommandCollection {
     public RegionCommand() {
         super("region", "server.commands.averageessentials.region.desc");
         this.addAliases("argm");
-        addSubCommand(new ClaimCommand());
-        addSubCommand(new UnclaimCommand());
-        addSubCommand(new UnclaimAllCommand());
-        addSubCommand(new ListCommand());
-        addSubCommand(new CreateCommand());
-        addSubCommand(new SelectCommand());
-        addSubCommand(new ShareCommand());
-        addSubCommand(new UnshareCommand());
-        addSubCommand(new TeleportCommand());
-        addSubCommand(new WelcomeMessageCommand());
-        addSubCommand(new LeaveMessageCommand());
-        addSubCommand(new DescriptionCommand());
-        addSubCommand(new ColorCommand());
-        addSubCommand(new FlagCommand());
-        addSubCommand(new LimitCommand());
-        addSubCommand(new RenameCommand());
-        addSubCommand(new ViewCommand());
+
+        CommandUtils.addSubcommands(
+                this,
+                new ClaimCommand(),
+                new UnclaimCommand(),
+                new UnclaimAllCommand(),
+                new ListCommand(),
+                new CreateCommand(),
+                new SelectCommand(),
+                new ShareCommand(),
+                new UnshareCommand(),
+                new TeleportCommand(),
+                new WelcomeMessageCommand(),
+                new LeaveMessageCommand(),
+                new DescriptionCommand(),
+                new ColorCommand(),
+                new FlagCommand(),
+                new LimitCommand(),
+                new RenameCommand(),
+                new ViewCommand()
+        );
     }
 
     protected static class FlagCommand extends CommandBase {
@@ -640,7 +645,7 @@ public class RegionCommand extends AbstractCommandCollection {
 
             try {
                 List<PlayerRegionGroup> regions;
-                
+
                 if (listAllFlag) {
                     regions = RegionService.getInstance().getAllRegions();
                 } else {

@@ -2,7 +2,6 @@ package github.renderbr.hytale.commands;
 
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
 import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import com.hypixel.hytale.common.plugin.PluginIdentifier;
 import com.hypixel.hytale.component.Ref;
@@ -25,6 +24,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
+import util.CommandUtils;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,11 +47,14 @@ public class AlteredPluginCommand extends AbstractCommandCollection {
     public AlteredPluginCommand() {
         super("plugin", "server.commands.plugin.desc");
         this.addAliases("plugins", "pl");
-        this.addSubCommand(new PluginListCommand());
-        this.addSubCommand(new PluginLoadCommand());
-        this.addSubCommand(new PluginUnloadCommand());
-        this.addSubCommand(new PluginReloadCommand());
-        this.addSubCommand(new PluginManageCommand());
+        CommandUtils.addSubcommands(
+                this,
+                new PluginListCommand(),
+                new PluginLoadCommand(),
+                new PluginUnloadCommand(),
+                new PluginReloadCommand(),
+                new PluginManageCommand()
+        );
     }
 
     private static class PluginListCommand extends CommandBase {
@@ -68,7 +71,7 @@ public class AlteredPluginCommand extends AbstractCommandCollection {
 
             Set<Message> plugins;
 
-            if(this.displayBasePlugins.get(context)){
+            if (this.displayBasePlugins.get(context)) {
                 plugins = (Set) module.getPlugins().stream().map(PluginBase::getIdentifier).map(PluginIdentifier::toString).map(Message::raw).collect(Collectors.toSet());
                 context.sendMessage(MessageFormat.list(Message.translation("server.commands.plugin.plugins"), plugins));
                 return;

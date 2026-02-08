@@ -33,7 +33,7 @@ public class HomeCommand extends AbstractCommandCollection {
     protected static class DeleteCommand extends CommandBase {
         public RequiredArg<String> homeNameArg;
 
-        public DeleteCommand(){
+        public DeleteCommand() {
             super("delete", "server.commands.averageessentials.home.delete.desc");
             homeNameArg = this.withRequiredArg("homeName", "server.commands.averageessentials.home.delete.arg.desc", com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes.STRING);
         }
@@ -51,7 +51,7 @@ public class HomeCommand extends AbstractCommandCollection {
 
                 var home = homeQuery.queryForFirst();
 
-                if(home == null){
+                if (home == null) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.delete.notfound").param("home", homeName));
                     return;
                 }
@@ -106,7 +106,7 @@ public class HomeCommand extends AbstractCommandCollection {
 
                 assert currentWorld != null;
                 currentWorld.execute(() -> {
-                    if(player.getReference() == null) return;
+                    if (player.getReference() == null) return;
 
                     var store = player.getReference().getStore();
                     var tp = new Teleport(world, home.getPosition(), home.getHeadRotation());
@@ -194,7 +194,7 @@ public class HomeCommand extends AbstractCommandCollection {
                 var homeCount = homeProvider.queryForEq("playerUUID", playerUuid.toString()).size();
 
                 var userGroups = PermissionsModule.get().getGroupsForUser(playerUuid).stream();
-                var defaultMaxHomes = ProviderRegistry.homeProvider.config.defaultMaxHomes;
+                var defaultMaxHomes = ProviderRegistry.homeProvider.getConfig().defaultMaxHomes;
 
                 var permissionsProvider = PermissionsModule.get().getFirstPermissionProvider();
                 var userPermissions = permissionsProvider.getUserPermissions(playerUuid);
@@ -207,11 +207,11 @@ public class HomeCommand extends AbstractCommandCollection {
                         .max()
                         .orElse(defaultMaxHomes);
 
-                if(userGroups.anyMatch(g -> g.equals(HytalePermissionsProvider.OP_GROUP))){
+                if (userGroups.anyMatch(g -> g.equals(HytalePermissionsProvider.OP_GROUP))) {
                     userHomeAmountEntitlement = Integer.MAX_VALUE;
                 }
 
-                if(homeCount >= userHomeAmountEntitlement){
+                if (homeCount >= userHomeAmountEntitlement) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.set.maxhomes").param("maxHomes", String.valueOf(userHomeAmountEntitlement)));
                     return;
                 }

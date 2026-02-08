@@ -16,23 +16,23 @@ public class NicknameProvider extends ConfigObjectProvider<NicknameConfiguration
     }
 
     public void setUserNickname(String uuid, String nickname) {
-        this.config.nicknames.put(uuid, nickname);
+        this.getConfig().nicknames.put(uuid, nickname);
         this.syncSave();
     }
 
     public boolean hasNickname(String uuid) {
-        return this.config.nicknames.containsKey(uuid);
+        return this.getConfig().nicknames.containsKey(uuid);
     }
 
     public String getUserNickname(String uuid) {
-        return this.config.nicknames.get(uuid);
+        return this.getConfig().nicknames.get(uuid);
     }
 
     public void applyNickname(String uuid) throws NoSuchFieldException, IllegalAccessException {
         var userNickname = getUserNickname(uuid);
         var player = Universe.get().getPlayer(UUID.fromString(uuid));
 
-        if(player == null || !player.isValid()){
+        if (player == null || !player.isValid()) {
             return;
         }
 

@@ -66,27 +66,27 @@ public class ChatListener {
 
         String finalDisplayName = displayName;
 
-        boolean shouldEmbedLinks = chatFilterConfigurationProvider.config.allowUsersToEmbedLinks || PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
+        boolean shouldEmbedLinks = chatFilterConfigurationProvider.getConfig().allowUsersToEmbedLinks || PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
 
         event.setFormatter((_, message) -> Message.join(
                 prefix,
                 Message.raw(finalDisplayName),
                 Message.raw(": "),
-                chatFilterConfigurationProvider.config.allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message, shouldEmbedLinks) : Message.raw(message)));
+                chatFilterConfigurationProvider.getConfig().allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message, shouldEmbedLinks) : Message.raw(message)));
     }
 
     private static boolean handleChatFiltering(PlayerChatEvent event, PlayerRef sender, ChatFilterConfigurationProvider chatFilterConfigurationProvider) {
         // regex for banned terms
-        var bannableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
+        var bannableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
 
         var chatContent = event.getContent();
 
         if (handleBannableTerms(event, bannableTerms, chatContent, sender)) return true;
 
-        var removableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
+        var removableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
         if (handleRemovableTerms(event, removableTerms, chatContent, sender)) return true;
 
-        var censorableTerms = chatFilterConfigurationProvider.config.GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
+        var censorableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
 
         for (var regex : censorableTerms) {
             chatContent = regex.matcher(chatContent).replaceAll("****");
@@ -129,7 +129,7 @@ public class ChatListener {
                         var disconnectReasonMsg = _reason;
 
                         if (disconnectEx != null) {
-                            disconnectEx.printStackTrace();
+                            throw new RuntimeException(disconnectEx);
                         }
 
                         if (disconnectReasonMsg.isEmpty()) {

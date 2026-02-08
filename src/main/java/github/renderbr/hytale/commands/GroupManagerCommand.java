@@ -9,13 +9,16 @@ import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import github.renderbr.hytale.registries.ProviderRegistry;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import util.CommandUtils;
 
 public class GroupManagerCommand extends AbstractCommandCollection {
 
     public GroupManagerCommand() {
         super("groupmanager", "server.commands.averageessentials.gm.desc");
         this.addAliases("agm", "groupman");
-        this.addSubCommand(new PrefixSubCommand());
+        CommandUtils.addSubcommands(this,
+                new PrefixSubCommand()
+        );
     }
 
     protected static class PrefixSubCommand extends CommandBase {
