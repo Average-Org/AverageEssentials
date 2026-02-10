@@ -18,7 +18,8 @@ public class CommandRegistry {
 
     public static final List<CommandBase> REGISTERED_COMMANDS = List.of(
             new NicknameCommand(),
-            new BroadcastCommand()
+            new BroadcastCommand(),
+            new ReloadCommand()
     );
 
 

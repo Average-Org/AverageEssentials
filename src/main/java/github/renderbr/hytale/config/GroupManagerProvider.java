@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class GroupManagerProvider extends BlockingDiskFile {
+    private final static String GROUPS_FILE = "groups.json";
+
     @Nonnull
     private final Map<String, GroupConfigObject> groups = new Object2ObjectOpenHashMap<>();
 
@@ -33,8 +35,8 @@ public final class GroupManagerProvider extends BlockingDiskFile {
     public static HashMap<String, Message> computedPrefixes = new HashMap<>();
 
     public GroupManagerProvider() {
-        super(util.PathUtils.getPathForConfig("groups.json"));
-        var path = PathUtils.getPathForConfig("groups.json");
+        super(util.PathUtils.getPathForConfig(GROUPS_FILE));
+        var path = PathUtils.getPathForConfig(GROUPS_FILE);
         PathUtils.initializeAndEnsurePathing(path, this);
     }
 

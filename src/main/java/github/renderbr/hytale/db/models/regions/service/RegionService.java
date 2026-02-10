@@ -67,7 +67,7 @@ public class RegionService {
     }
 
     public boolean canCreateRegion(String playerUuid) throws SQLException {
-        return Objects.requireNonNull(getRegions(playerUuid)).size() < ProviderRegistry.regionProvider.config.defaultMaxRegions
+        return Objects.requireNonNull(getRegions(playerUuid)).size() < ProviderRegistry.regionProvider.getConfig().defaultMaxRegions
                 || PermissionsModule.get().hasPermission(UUID.fromString(playerUuid), "averageessentials.regions.unlimited");
     }
 

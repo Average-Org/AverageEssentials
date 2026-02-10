@@ -1,18 +1,18 @@
 package github.renderbr.hytale.config;
 
-import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import github.renderbr.hytale.config.obj.NicknameConfiguration;
 import util.ConfigObjectProvider;
+import util.ReflectionUtils;
+import util.UniverseUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Map;
 import java.util.UUID;
 
 public class NicknameProvider extends ConfigObjectProvider<NicknameConfiguration> {
+    private static final String NICKNAMES_FILE = "nicknames.json";
+
     public NicknameProvider() {
-        super("nicknames.json", NicknameConfiguration.class);
+        super(NICKNAMES_FILE, NicknameConfiguration.class);
     }
 
     public void setUserNickname(String uuid, String nickname) {
@@ -36,20 +36,8 @@ public class NicknameProvider extends ConfigObjectProvider<NicknameConfiguration
             return;
         }
 
-        // access private list 'players' on Universe via reflection
-        Field playersField = Universe.class.getDeclaredField("players");
-        playersField.setAccessible(true);
-
-        java.lang.Object value = playersField.get(Universe.get());
-        Map<UUID, PlayerRef> players = (Map<UUID, PlayerRef>) value;
-
-        // update player's username via uuid
+        var players = UniverseUtils.getPlayerRefs();
         var playerRef = players.get(UUID.fromString(uuid));
-
-        // access username field via reflection
-        Field usernameField = PlayerRef.class.getDeclaredField("username");
-        usernameField.setAccessible(true);
-
-        usernameField.set(playerRef, userNickname);
+        ReflectionUtils.setFieldValue(playerRef, "username", userNickname);
     }
 }

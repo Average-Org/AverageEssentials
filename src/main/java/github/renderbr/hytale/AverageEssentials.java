@@ -3,6 +3,7 @@ package github.renderbr.hytale;
 
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import github.renderbr.hytale.config.InformationalMessageProvider;
 import github.renderbr.hytale.db.models.PlayerHome;
 import github.renderbr.hytale.db.models.regions.PlayerRegionChunk;
 import github.renderbr.hytale.db.models.regions.PlayerRegionCommandData;
@@ -17,8 +18,6 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import util.DbUtils;
 import util.PathUtils;
 
-import java.sql.SQLException;
-
 public class AverageEssentials extends JavaPlugin {
 
     public static DatabaseService databaseService;
@@ -30,17 +29,13 @@ public class AverageEssentials extends JavaPlugin {
     @Override
     protected void setup() {
         PathUtils.setModDirectoryName("AverageEssentials");
-
-        try {
-            databaseService = DbUtils.initializeDatabase("average-essentials");
-            databaseService.addTable(PlayerHome.class);
-            databaseService.addTable(PlayerRegionChunk.class);
-            databaseService.addTable(PlayerRegionGroup.class);
-            databaseService.addTable(PlayerRegionGroupShare.class);
-            databaseService.addTable(PlayerRegionCommandData.class);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        databaseService = DbUtils.initializeDatabase(
+                "average-essentials",
+                PlayerHome.class,
+                PlayerRegionChunk.class,
+                PlayerRegionGroup.class,
+                PlayerRegionGroupShare.class,
+                PlayerRegionCommandData.class);
 
         CommandRegistry.registerCommands(this.getCommandRegistry());
         ProviderRegistry.registerProviders();
@@ -55,7 +50,15 @@ public class AverageEssentials extends JavaPlugin {
 
     @Override
     protected void shutdown() {
+        ProviderRegistry.informationalMessageProvider.shutdown();
         RegionBoundaryService.getInstance().stop();
+
+        try {
+            databaseService.connectionSource.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         super.shutdown();
     }
 }

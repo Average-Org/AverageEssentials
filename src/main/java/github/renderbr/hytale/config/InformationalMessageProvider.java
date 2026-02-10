@@ -1,9 +1,9 @@
 package github.renderbr.hytale.config;
 
 import com.google.gson.*;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.command.system.CommandRegistration;
 import com.hypixel.hytale.server.core.universe.Universe;
-import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.util.EventTitleUtil;
 import com.hypixel.hytale.server.core.util.io.BlockingDiskFile;
 import github.renderbr.hytale.commands.BasicOutputCommand;
 import github.renderbr.hytale.config.obj.InformationalMessageConfiguration;
@@ -15,6 +15,8 @@ import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,6 +24,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class InformationalMessageProvider extends BlockingDiskFile {
+    private static final String CONFIG_FILE = "messages.json";
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
     @Nonnull
     public InformationalMessageConfiguration config = new InformationalMessageConfiguration();
 
@@ -30,58 +35,92 @@ public final class InformationalMessageProvider extends BlockingDiskFile {
     ScheduledFuture<?> broadcastTimer;
 
     Queue<String> messageQueue = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    List<CommandRegistration> registeredCommands = new ArrayList<>();
 
     public InformationalMessageProvider() {
-        super(PathUtils.getPathForConfig("messages.json"));
-        var path = PathUtils.getPathForConfig("messages.json");
+        super(PathUtils.getPathForConfig(CONFIG_FILE));
+        var path = PathUtils.getPathForConfig(CONFIG_FILE);
         PathUtils.initializeAndEnsurePathing(path, this);
-        registerDynamicInformationMessageCommands();
-
-        // start timer
-        messageQueue.addAll(config.occasionalBroadcasts);
-        broadcastTimer = scheduler.scheduleAtFixedRate(this::doBroadcast, config.broadcastFrequencyInSeconds, config.broadcastFrequencyInSeconds, TimeUnit.SECONDS);
+        reload();
     }
 
-    private void doBroadcast(){
-        if(messageQueue.isEmpty()){
-            messageQueue.addAll(config.occasionalBroadcasts);
-        }
+    private void doBroadcast() {
+        try {
+            if (config.occasionalBroadcasts.isEmpty()) {
+                return;
+            }
 
-        String message = messageQueue.poll();
-        if(message != null && !message.isEmpty()){
-            Universe.get().getPlayers().forEach(playerRef -> {
-                if(!playerRef.isValid()){
-                    return;
-                }
+            if (messageQueue.isEmpty()) {
+                messageQueue.addAll(config.occasionalBroadcasts);
+            }
 
-                playerRef.sendMessage(ColorUtils.parseColorCodes(message));
-            });
+            String message = messageQueue.poll();
+            if (message != null && !message.isEmpty()) {
+                Universe.get().getPlayers().forEach(playerRef -> {
+                    if (!playerRef.isValid()) {
+                        return;
+                    }
+
+                    playerRef.sendMessage(ColorUtils.parseColorCodes(message));
+                });
+            }
+        } catch (Exception e) {
+            LOGGER.atSevere().withCause(e).log("Failed to broadcast message");
         }
     }
 
     @Override
-    protected void read(BufferedReader bufferedReader) throws IOException {
+    protected void read(BufferedReader bufferedReader) {
         JsonObject root = JsonParser.parseReader(bufferedReader).getAsJsonObject();
 
         if (root.has("config")) {
             this.config = GSON.fromJson(root.get("config"), InformationalMessageConfiguration.class);
-            registerDynamicInformationMessageCommands();
-
-            if(broadcastTimer != null) {
-                broadcastTimer.cancel(false);
-                messageQueue.clear();
-
-                messageQueue.addAll(config.occasionalBroadcasts);
-                broadcastTimer = scheduler.scheduleAtFixedRate(this::doBroadcast, config.broadcastFrequencyInSeconds, config.broadcastFrequencyInSeconds, TimeUnit.SECONDS);
-            }
+            reload();
         }
+    }
+
+    @Override
+    public void syncLoad() {
+        super.syncLoad();
+        reload();
+    }
+
+    public void reload() {
+        if (broadcastTimer != null) {
+            broadcastTimer.cancel(false);
+            messageQueue.clear();
+        }
+
+        registeredCommands.forEach(CommandRegistration::unregister);
+        registeredCommands.clear();
+
+        registerDynamicInformationMessageCommands();
+
+        messageQueue.addAll(config.occasionalBroadcasts);
+        startBroadcastTimer();
+    }
+
+    public void shutdown(){
+        scheduler.shutdown();
+        try {
+            if(!scheduler.awaitTermination(1, TimeUnit.SECONDS)){
+                scheduler.shutdownNow();
+            }
+        } catch(InterruptedException e){
+            scheduler.shutdownNow();
+        }
+    }
+
+    public void startBroadcastTimer() {
+        broadcastTimer = scheduler.scheduleAtFixedRate(this::doBroadcast, config.broadcastFrequencyInSeconds, config.broadcastFrequencyInSeconds, TimeUnit.SECONDS);
     }
 
     private void registerDynamicInformationMessageCommands() {
         var commandRegistry = CommandRegistry.getHytaleCommandRegistry();
 
         this.config.commandInfoMessages.forEach((key, message) -> {
-            commandRegistry.registerCommand(new BasicOutputCommand(key, message));
+            var command = new BasicOutputCommand(key, message);
+            registeredCommands.add(commandRegistry.registerCommand(command));
         });
     }
 

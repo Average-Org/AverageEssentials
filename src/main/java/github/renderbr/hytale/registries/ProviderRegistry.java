@@ -18,4 +18,13 @@ public class ProviderRegistry {
         homeProvider = new HomeProvider();
         regionProvider = new RegionProvider();
     }
+
+    public static void reloadAll(){
+        groupManagerProvider.syncLoad();
+        nicknameProvider.syncLoad();
+        homeProvider.syncLoad();
+        regionProvider.syncLoad();
+        informationalMessageProvider.syncLoad();
+        chatFilterConfigurationProvider.syncLoad();
+    }
 }

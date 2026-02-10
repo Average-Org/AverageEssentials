@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "github.renderbr.hytale"
-version = "0.2.7"
+version = "0.2.8"
 
 repositories {
     mavenCentral()
@@ -21,6 +21,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     compileOnly("com.hypixel.hytale:Server:2026.01.27-734d39026")
     implementation(files("libs/AverageHytaleCore.jar"))
+    implementation("org.slf4j:slf4j-simple:2.0.12")
 }
 
 tasks.test {
@@ -29,6 +30,6 @@ tasks.test {
 
 tasks.shadowJar {
     mergeServiceFiles()
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     isZip64 = true
 }
