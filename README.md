@@ -20,6 +20,7 @@
 
 ### Administration
 - **Plugin Management**: Provides comprehensive commands to list, load, unload, reload, and manage plugins directly from the server console or in-game.
+- **Configuration Reload**: Use `/avreload` (aliases: `/avr`, `/reloadav`) to reload all plugin configurations without restarting the server.
 - **Group Management**: Allows administrators to set and manage prefixes for permission groups, stored in configurable JSON files.
 - **Informational Messages**: Supports welcome messages for new players, periodic broadcasts to all online players, and dynamic commands for quick information dissemination (e.g., Discord links).
 
@@ -41,12 +42,17 @@
 
 ## Installation
 
-1. Download the latest release JAR (version 0.2.7) from the releases section.
+1. Download the latest release JAR (version 0.2.8) from the releases section.
 2. Place the JAR file in your server's plugins directory.
 3. Restart the server to load the plugin.
 4. Configure groups, messages, broadcasts, home limits, link embedding, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
 
-### New in v0.2.7
+### New in v0.2.8
+- Configuration reload command (`/avreload`) for on-the-fly updates without server restart
+- Improved configuration provider lifecycle management
+- Enhanced build system with proper dependency bundling and ZIP64 support
+
+### Previous (v0.2.7)
 - Link embedding option with configurable preview settings
 - Updated Hytale Server dependency compatibility
 - Improved home and chat system functionality

@@ -2,6 +2,34 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.8] - 2026-02-10
+
+### Added
+- **Reload Command**
+  - New `/avreload` command (aliases: `/avr`, `/reloadav`) to reload all configurations without restarting
+  - Allows administrators to update settings on-the-fly
+
+### Improvements
+- **Configuration Providers**
+  - Refactored config providers to use consistent getter methods
+  - Improved code consistency across all configuration handlers
+  - Enhanced provider lifecycle management during plugin shutdown
+
+- **Plugin Lifecycle**
+  - Improved shutdown procedure with proper provider cleanup
+  - Added informational message provider shutdown handling
+  - Better database connection cleanup during server shutdown
+
+- **Build System**
+  - Configured shadowJar to properly merge service files
+  - Changed duplicate handling strategy from EXCLUDE to INCLUDE for better dependency bundling
+  - Enabled ZIP64 support for handling large JAR files
+
+### Technical
+- Updated AverageHytaleCore library with improved utilities
+- Added SLF4J Simple logging implementation
+- Code cleanup and minor refactoring for consistency
+
 ## [0.2.7] - 2026-01-27
 
 ### Added
