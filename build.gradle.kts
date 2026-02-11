@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "github.renderbr.hytale"
-version = "0.2.8"
+version = "0.2.8.1"
 
 java {
     toolchain {
