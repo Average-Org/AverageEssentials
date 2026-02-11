@@ -37,17 +37,23 @@
 ## Requirements
 
 - Hytale Server (latest API version)
-- Java 8 or higher
+- Java 25 or higher
 - Gradle for building (included in the project)
 
 ## Installation
 
-1. Download the latest release JAR (version 0.2.8) from the releases section.
+1. Download the latest release JAR (version 0.2.8.1) from the releases section.
 2. Place the JAR file in your server's plugins directory.
 3. Restart the server to load the plugin.
 4. Configure groups, messages, broadcasts, home limits, link embedding, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
 
-### New in v0.2.8
+### New in v0.2.8.1
+- **Code Refactor & Optimization**: Significant cleanup of command logic (Home, Nickname, Region) and chat filtering for better performance and maintainability.
+- **Enhanced Testing**: Added unit tests for core components using JUnit 5 and Mockito.
+- **Modern Java**: Updated build system to utilize Java 25.
+- **Project Documentation**: Added `GEMINI.md` for better developer onboarding and project understanding.
+
+### Previous (v0.2.8)
 - Configuration reload command (`/avreload`) for on-the-fly updates without server restart
 - Improved configuration provider lifecycle management
 - Enhanced build system with proper dependency bundling and ZIP64 support

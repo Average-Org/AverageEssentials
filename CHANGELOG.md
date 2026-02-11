@@ -2,6 +2,31 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.8.1] - 2026-02-10
+
+### Refactor & Cleanup
+- **Command Logic Improvements**
+  - Refactored `HomeCommand` with better null checks, improved home listing, and simplified permission/limit logic.
+  - Streamlined `NicknameCommand` by splitting handling for own vs. other players and adding a helper for nickname updates.
+  - Consolidated `RegionCommand` flag updates, refined region claim flow, and improved stats message assembly.
+- **Core Logic Refinement**
+  - Major rework of `ChatListener` for better organization and streamlined filtering flow (bannable, removable, and censorable terms).
+  - Improved `RegionService` with new helpers for interaction logic and colored message parsing.
+  - Enhanced null safety and encapsulation across several key components.
+
+### Technical
+- **Java Toolchain Update**
+  - Updated Java toolchain to version 25 in `build.gradle.kts`.
+- **Testing Infrastructure**
+  - Added unit tests for `ChatFilterConfiguration`, `RegionZone`, and `ChatListener`.
+  - Integrated Mockito for improved testability and enabled Hytale Server context for tests.
+- **Documentation**
+  - Added `GEMINI.md` with a comprehensive project overview and development instructions.
+
+### Localization
+- Fixed and added several translation keys in `server.lang` for more consistent messaging.
+- Updated ECS handlers to use the correct translation keys.
+
 ## [0.2.8] - 2026-02-10
 
 ### Added
