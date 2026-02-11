@@ -13,6 +13,7 @@ import github.renderbr.hytale.db.models.regions.PlayerRegionGroup;
 import github.renderbr.hytale.db.models.regions.PlayerRegionGroupShare;
 import github.renderbr.hytale.db.models.regions.param.RegionZone;
 import github.renderbr.hytale.registries.ProviderRegistry;
+import util.ColorUtils;
 
 import javax.annotation.Nullable;
 import java.sql.SQLException;
@@ -142,25 +143,23 @@ public class RegionService {
         return getRegionChunkTable().queryBuilder().where().eq("regionGroup_id", regionGroup.getId()).query();
     }
 
-    public boolean canInteract(PlayerRegionGroup region, String interactingPlayerUuid, boolean isBlockBreak, boolean isBlockPlace, boolean isInteraction, boolean isPvP) throws SQLException {
-        // Check if region is owned by the interacting player
-        if (region.playerUuid.equals(interactingPlayerUuid)) {
+    public boolean canInteract(PlayerRegionGroup region, String playerUuid, boolean isBreak, boolean isPlace, boolean isInteract, boolean isPvP) throws SQLException {
+        if (isOwnerOrShared(region, playerUuid)) {
             return true;
         }
 
-        // Check shared players
-        var sharedPlayers = getSharedPlayersForRegion(region);
-        if (sharedPlayers.contains(interactingPlayerUuid)) {
-            return true;
-        }
-
-        // Check specific interaction flags
-        if (isBlockBreak && !region.allowBlockBreak) return false;
-        if (isBlockPlace && !region.allowBlockPlace) return false;
-        if (isInteraction && !region.allowInteraction) return false;
-        if (isPvP && !region.pvpEnabled) return false;
+        if (isBreak) return region.allowBlockBreak;
+        if (isPlace) return region.allowBlockPlace;
+        if (isInteract) return region.allowInteraction;
+        if (isPvP) return region.pvpEnabled;
 
         return false;
+    }
+
+    private boolean isOwnerOrShared(PlayerRegionGroup region, String playerUuid) throws SQLException {
+        if (region.playerUuid.equals(playerUuid)) return true;
+        
+        return getSharedPlayersForRegion(region).contains(playerUuid);
     }
 
     public List<String> getSharedPlayersForRegion(PlayerRegionGroup region) throws SQLException {
@@ -246,15 +245,12 @@ public class RegionService {
     }
 
     public void triggerRegionMessages(PlayerRegionGroup region, String playerUuid, boolean entering) {
-        try {
-            var player = Universe.get().getPlayer(UUID.fromString(playerUuid));
-            if (player == null) return;
+        var player = Universe.get().getPlayer(UUID.fromString(playerUuid));
+        if (player == null) return;
 
-            String message = entering ? region.welcomeMessage : region.leaveMessage;
-            if (message != null && !message.isEmpty()) {
-                player.sendMessage(Message.raw(message));
-            }
-        } catch (Exception ignored) {
+        String message = entering ? region.welcomeMessage : region.leaveMessage;
+        if (message != null && !message.isEmpty()) {
+            player.sendMessage(ColorUtils.parseColorCodes(message));
         }
     }
 }

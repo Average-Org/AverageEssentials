@@ -45,7 +45,7 @@ public class PlaceBlockEventHandler extends EntityEventSystem<EntityStore, Place
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), false, true, false, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("averageessentials.region.buildingdenied"));
+                player.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
                 placeBlockEvent.setCancelled(true);
             }
 

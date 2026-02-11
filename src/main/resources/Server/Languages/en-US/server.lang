@@ -23,7 +23,7 @@ commands.averageessentials.home.list.header=Your homes:
 commands.averageessentials.home.set.desc=Set a new home or update an existing one
 commands.averageessentials.home.set.arg.desc=The name of the home to set or update
 commands.averageessentials.home.set.success=Home '{home}' has been set successfully.
-commands.averageessentials.home.set.maxhomes=You have reached the maximum number of homes allowed ({max}). Please delete an existing home before setting a new one.
+commands.averageessentials.home.set.maxhomes=You have reached the maximum number of homes allowed ({maxHomes}). Please delete an existing home before setting a new one.
 commands.averageessentials.home.delete.notfound=Home '{home}' not found.
 commands.averageessentials.home.delete.success=Home '{home}' has been deleted successfully.
 
@@ -55,7 +55,7 @@ commands.averageessentials.region.create.limitreached=You have reached the maxim
 # Region Claim
 commands.averageessentials.region.claim.desc=Claim the current area for your selected region
 commands.averageessentials.region.claim.failure=Cannot claim here; this area intersects with another region!
-commands.averageessentials.region.claim.success=Area claimed successfully!
+commands.averageessentials.region.claim.success=Area claimed successfully! ({blocks} blocks, {remainingBlocks} remaining capacity)
 commands.averageessentials.region.claim.blocklimit=This claim is too big! It requires {requestedBlocks} blocks, but you only have {maxBlocks} total capacity ({currentBlocks} already used).
 commands.averageessentials.region.unclaim.desc=Unclaim the chunk you are standing in
 commands.averageessentials.region.unclaim.notfound=This area is not claimed.
@@ -144,6 +144,27 @@ commands.averageessentials.broadcast.desc=Broadcast a message to all players
 commands.averageessentials.broadcast.arg.desc=The message to broadcast
 commands.averageessentials.broadcast.success=Successfully broadcasted your message.
 
+# Reload Command
+commands.averageessentials.reload.desc=Reload all configurations
+commands.averageessentials.reload.success=All configurations have been reloaded.
+
+# Region Stats
+commands.averageessentials.region.stats.desc=View statistics for the selected region
+commands.averageessentials.region.stats.header=--- Region Stats: {name} ---
+commands.averageessentials.region.stats.noselected=You have no region selected.
+commands.averageessentials.region.stats.entry.description=Description: {description}
+commands.averageessentials.region.stats.entry.blocks=Blocks: {currentBlocks}/{maxBlocks}
+commands.averageessentials.region.stats.entry.chunks=Chunks: {chunkCount}
+commands.averageessentials.region.stats.entry.flags=Flags: Break: {blockBreak}, Place: {blockPlace}, Interact: {interaction}, PvP: {pvp}
+commands.averageessentials.region.stats.entry.welcomemsg=Welcome: {welcomeMsg}
+commands.averageessentials.region.stats.entry.leavemsg=Leave: {leaveMsg}
+commands.averageessentials.region.na=N/A
+
+# Region Denials
+averageessentials.region.buildingdenied=You do not have permission to build here.
+averageessentials.region.usingdenied=You do not have permission to use this here.
+
 averageessentials.ban.forusingbannedword=You have been banned for using a banned word.
+averageessentials.ban.defaultreason=You have been banned from the server.
 averageessentials.filter.restrictedword=Your message contains a restricted word and cannot be sent.
 averageessentials.err.somethingwentwrong=Something went wrong. Please contact an administrator.

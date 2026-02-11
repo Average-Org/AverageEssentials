@@ -47,7 +47,7 @@ public class UseBlockEventHandler extends EntityEventSystem<EntityStore, UseBloc
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), false, false, true, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("averageessentials.region.usingdenied"));
+                player.sendMessage(Message.translation("server.averageessentials.region.usingdenied"));
                 useBlockEvent.setCancelled(true);
             }
 

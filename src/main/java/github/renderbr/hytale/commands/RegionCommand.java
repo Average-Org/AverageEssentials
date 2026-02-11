@@ -76,33 +76,19 @@ public class RegionCommand extends AbstractCommandCollection {
         @Override
         protected void executeSync(@NonNullDecl CommandContext commandContext) {
             var playerUuid = commandContext.sender().getUuid();
-            var flagTypeStr = this.flagType.get(commandContext);
+            var flagTypeStr = this.flagType.get(commandContext).toLowerCase();
             var flagValueBool = this.flagValue.get(commandContext);
 
             try {
                 var region = RegionService.getInstance().getSelectedRegionGroup(playerUuid.toString());
-
                 if (region == null) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.flag.noselected"));
                     return;
                 }
 
-                switch (flagTypeStr.toLowerCase()) {
-                    case "blockbreak":
-                        region.allowBlockBreak = flagValueBool;
-                        break;
-                    case "blockplace":
-                        region.allowBlockPlace = flagValueBool;
-                        break;
-                    case "interaction":
-                        region.allowInteraction = flagValueBool;
-                        break;
-                    case "pvp":
-                        region.pvpEnabled = flagValueBool;
-                        break;
-                    default:
-                        commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.flag.invalidflag"));
-                        return;
+                if (!updateFlag(region, flagTypeStr, flagValueBool)) {
+                    commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.flag.invalidflag"));
+                    return;
                 }
 
                 RegionService.getInstance().updateRegionGroup(region);
@@ -112,6 +98,17 @@ public class RegionCommand extends AbstractCommandCollection {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        private boolean updateFlag(PlayerRegionGroup region, String type, boolean value) {
+            switch (type) {
+                case "blockbreak" -> region.allowBlockBreak = value;
+                case "blockplace" -> region.allowBlockPlace = value;
+                case "interaction" -> region.allowInteraction = value;
+                case "pvp" -> region.pvpEnabled = value;
+                default -> { return false; }
+            }
+            return true;
         }
     }
 
@@ -236,18 +233,31 @@ public class RegionCommand extends AbstractCommandCollection {
 
                 var chunks = RegionService.getInstance().getChunksFromRegion(region);
 
+                Message na = Message.translation("server.averageessentials.region.na");
                 Message statsMessage = Message.translation("server.commands.averageessentials.region.stats.header")
-                        .param("name", region.groupName)
-                        .param("description", region.description != null ? region.description : "N/A")
+                        .param("name", region.groupName);
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.description")
+                        .param("description", region.description != null ? region.description : na.getAnsiMessage()));
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.blocks")
                         .param("currentBlocks", region.currentClaimedBlocks)
-                        .param("maxBlocks", region.maxClaimBlocks)
-                        .param("chunkCount", chunks.size())
+                        .param("maxBlocks", region.maxClaimBlocks));
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.chunks")
+                        .param("chunkCount", chunks.size()));
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.flags")
                         .param("blockBreak", region.allowBlockBreak)
                         .param("blockPlace", region.allowBlockPlace)
                         .param("interaction", region.allowInteraction)
-                        .param("pvp", region.pvpEnabled)
-                        .param("welcomeMsg", region.welcomeMessage != null ? region.welcomeMessage : "N/A")
-                        .param("leaveMsg", region.leaveMessage != null ? region.leaveMessage : "N/A");
+                        .param("pvp", region.pvpEnabled));
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.welcomemsg")
+                        .param("welcomeMsg", region.welcomeMessage != null ? region.welcomeMessage : na.getAnsiMessage()));
+
+                statsMessage = Message.join(statsMessage, Message.raw("\n"), Message.translation("server.commands.averageessentials.region.stats.entry.leavemsg")
+                        .param("leaveMsg", region.leaveMessage != null ? region.leaveMessage : na.getAnsiMessage()));
 
                 commandContext.sendMessage(statsMessage);
             } catch (SQLException e) {
@@ -396,59 +406,34 @@ public class RegionCommand extends AbstractCommandCollection {
 
             try {
                 var region = RegionService.getInstance().getRegionGroup(playerUuid.toString(), regionNameArg);
-
                 if (region == null) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.tp.notfound"));
                     return;
                 }
 
                 var regionChunks = RegionService.getInstance().getChunksFromRegion(region);
-
                 if (regionChunks.isEmpty()) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.tp.nochunks"));
                     return;
                 }
 
-                var firstChunk = regionChunks.getFirst();
                 var player = Universe.get().getPlayer(playerUuid);
+                if (player == null) return;
 
-                if (player == null) {
-                    return;
-                }
-
-                var centerX = (firstChunk.firstCornerX + firstChunk.secondCornerX) / 2;
-                var centerZ = (firstChunk.firstCornerZ + firstChunk.secondCornerZ) / 2;
-
-                // get closest spawnable area (ground, with two blocks above)
+                var firstChunk = regionChunks.getFirst();
                 var world = Universe.get().getWorld(UUID.fromString(firstChunk.worldUuid));
+                if (world == null) return;
+
+                Vector3d spawnPos = calculateSpawnPosition(world, firstChunk);
+                
                 var currentWorld = Universe.get().getWorld(player.getWorldUuid());
+                if (currentWorld == null) return;
 
-                int finalY = firstChunk.secondCornerY;
-
-                if (world == null) {
-                    return;
-                }
-
-                for (int y = firstChunk.secondCornerY; y >= firstChunk.firstCornerY; y--) {
-                    var currentBlock = world.getBlock(centerX, y, centerZ);
-                    var firstAbove = world.getBlock(centerX, y + 1, centerZ);
-                    var secondAbove = world.getBlock(centerX, y + 2, centerZ);
-
-                    // check if the current block is solid ground and has 2 blocks of air above it
-                    if (currentBlock != 0 && firstAbove == 0 && secondAbove == 0) {
-                        finalY = y + 1; // set spawn position just above the ground
-                        break;
-                    }
-                }
-
-                Vector3d spawnPos = new Vector3d(centerX, finalY, centerZ);
-
-                assert currentWorld != null;
                 currentWorld.execute(() -> {
                     if (player.getReference() == null) return;
 
                     var store = player.getReference().getStore();
-                    var tp = new Teleport(world, new Vector3d(centerX, spawnPos.y, centerZ), player.getTransform().getRotation());
+                    var tp = new Teleport(world, spawnPos, player.getTransform().getRotation());
                     store.addComponent(player.getReference(), Teleport.getComponentType(), tp);
                 });
 
@@ -456,6 +441,27 @@ public class RegionCommand extends AbstractCommandCollection {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        private Vector3d calculateSpawnPosition(com.hypixel.hytale.server.core.universe.world.World world, github.renderbr.hytale.db.models.regions.PlayerRegionChunk chunk) {
+            int centerX = (chunk.firstCornerX + chunk.secondCornerX) / 2;
+            int centerZ = (chunk.firstCornerZ + chunk.secondCornerZ) / 2;
+            int finalY = chunk.secondCornerY;
+
+            for (int y = chunk.secondCornerY; y >= chunk.firstCornerY; y--) {
+                if (isSpawnable(world, centerX, y, centerZ)) {
+                    finalY = y + 1;
+                    break;
+                }
+            }
+            return new Vector3d(centerX, finalY, centerZ);
+        }
+
+        private boolean isSpawnable(com.hypixel.hytale.server.core.universe.world.World world, int x, int y, int z) {
+            var currentBlock = world.getBlock(x, y, z);
+            var firstAbove = world.getBlock(x, y + 1, z);
+            var secondAbove = world.getBlock(x, y + 2, z);
+            return currentBlock != 0 && firstAbove == 0 && secondAbove == 0;
         }
     }
 
@@ -777,57 +783,31 @@ public class RegionCommand extends AbstractCommandCollection {
         protected void executeSync(@NonNullDecl CommandContext commandContext) {
             var playerUuid = commandContext.sender().getUuid();
             var player = Universe.get().getPlayer(playerUuid);
-            var pos = player.getTransform().getPosition();
+            if (player == null) return;
 
-            // claim blocks in 15 block radius
+            var pos = player.getTransform().getPosition();
+            var worldUuid = player.getWorldUuid().toString();
             var regionZone = RegionZone.getFromPosition(pos);
 
-            // Check if intersecting with other region that is not owned by yourself.
             try {
-                var intersectingRegions = RegionService.getInstance().getIntersectingRegionsFromRect(regionZone, player.getWorldUuid().toString());
-
-                var selectedRegion = RegionService.getInstance().getSelectedRegionGroup(playerUuid.toString());
+                var selectedRegion = getOrCreateSelectedRegion(playerUuid.toString(), player.getUsername());
                 if (selectedRegion == null) {
-                    if (!RegionService.getInstance().canCreateRegion(playerUuid.toString())) {
-                        commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.create.limitreached"));
-                        return;
-                    }
-
-                    selectedRegion = RegionService.getInstance().createRegionGroup(playerUuid.toString(), player.getUsername() + "-" + System.currentTimeMillis());
-                    RegionService.getInstance().setSelectedRegionGroup(playerUuid.toString(), selectedRegion);
+                    commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.create.limitreached"));
+                    return;
                 }
 
-                PlayerRegionGroup finalSelectedRegion = selectedRegion;
-                if (!intersectingRegions.isEmpty() && !intersectingRegions.stream().allMatch((r) ->
-                        r.regionGroup.getId().equals(finalSelectedRegion.getId()))) {
+                if (isIntersectingOtherRegions(regionZone, worldUuid, selectedRegion)) {
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.claim.failure"));
                     return;
                 }
 
-                // Calculate block count and check if region can claim more
-                int blockCount = (Math.abs(regionZone.secondCornerX - regionZone.firstCornerX) + 1) *
-                        (Math.abs(regionZone.secondCornerY - regionZone.firstCornerY) + 1) *
-                        (Math.abs(regionZone.secondCornerZ - regionZone.firstCornerZ) + 1);
-
+                int blockCount = calculateBlockCount(regionZone);
                 if (!selectedRegion.canClaim(blockCount)) {
-                    commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.claim.blocklimit")
-                            .param("currentBlocks", selectedRegion.currentClaimedBlocks)
-                            .param("maxBlocks", selectedRegion.maxClaimBlocks)
-                            .param("requestedBlocks", blockCount).color(Color.RED.brighter()));
+                    sendBlockLimitMessage(commandContext, selectedRegion, blockCount);
                     return;
                 }
 
-                PlayerRegionChunk region = new PlayerRegionChunk();
-                region.chunkName = player.getUsername() + "-" + System.currentTimeMillis();
-                region.playerUuid = playerUuid.toString();
-                region.worldUuid = player.getWorldUuid().toString();
-                region.regionGroup = selectedRegion;
-                region.setZone(regionZone);
-                RegionService.getInstance().createRegionChunk(region);
-
-                // Update claimed blocks count
-                selectedRegion.updateClaimedBlocks(blockCount);
-                RegionService.getInstance().updateRegionGroup(selectedRegion);
+                claimRegionChunk(playerUuid.toString(), worldUuid, selectedRegion, regionZone, blockCount);
 
                 commandContext.sendMessage(Message.translation("server.commands.averageessentials.region.claim.success")
                         .param("blocks", blockCount)
@@ -835,8 +815,50 @@ public class RegionCommand extends AbstractCommandCollection {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
 
+        private PlayerRegionGroup getOrCreateSelectedRegion(String playerUuid, String username) throws SQLException {
+            var regionService = RegionService.getInstance();
+            var selectedRegion = regionService.getSelectedRegionGroup(playerUuid);
+            
+            if (selectedRegion != null) return selectedRegion;
+            if (!regionService.canCreateRegion(playerUuid)) return null;
 
+            selectedRegion = regionService.createRegionGroup(playerUuid, username + "-" + System.currentTimeMillis());
+            regionService.setSelectedRegionGroup(playerUuid, selectedRegion);
+            return selectedRegion;
+        }
+
+        private boolean isIntersectingOtherRegions(RegionZone zone, String worldUuid, PlayerRegionGroup currentRegion) throws SQLException {
+            var intersecting = RegionService.getInstance().getIntersectingRegionsFromRect(zone, worldUuid);
+            return !intersecting.isEmpty() && intersecting.stream()
+                    .anyMatch(chunk -> !chunk.regionGroup.getId().equals(currentRegion.getId()));
+        }
+
+        private int calculateBlockCount(RegionZone zone) {
+            return (Math.abs(zone.secondCornerX - zone.firstCornerX) + 1) *
+                   (Math.abs(zone.secondCornerY - zone.firstCornerY) + 1) *
+                   (Math.abs(zone.secondCornerZ - zone.firstCornerZ) + 1);
+        }
+
+        private void sendBlockLimitMessage(CommandContext context, PlayerRegionGroup region, int requested) {
+            context.sendMessage(Message.translation("server.commands.averageessentials.region.claim.blocklimit")
+                    .param("currentBlocks", region.currentClaimedBlocks)
+                    .param("maxBlocks", region.maxClaimBlocks)
+                    .param("requestedBlocks", requested).color(Color.RED.brighter()));
+        }
+
+        private void claimRegionChunk(String playerUuid, String worldUuid, PlayerRegionGroup region, RegionZone zone, int blocks) throws SQLException {
+            PlayerRegionChunk chunk = new PlayerRegionChunk();
+            chunk.chunkName = "Claim-" + System.currentTimeMillis();
+            chunk.playerUuid = playerUuid;
+            chunk.worldUuid = worldUuid;
+            chunk.regionGroup = region;
+            chunk.setZone(zone);
+            
+            RegionService.getInstance().createRegionChunk(chunk);
+            region.updateClaimedBlocks(blocks);
+            RegionService.getInstance().updateRegionGroup(region);
         }
     }
 }

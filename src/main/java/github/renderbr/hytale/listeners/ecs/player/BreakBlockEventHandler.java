@@ -46,7 +46,7 @@ public class BreakBlockEventHandler extends EntityEventSystem<EntityStore, Break
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), true, false, false, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("averageessentials.region.buildingdenied"));
+                player.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
                 breakBlockEvent.setCancelled(true);
             }
 

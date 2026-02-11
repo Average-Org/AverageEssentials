@@ -38,111 +38,97 @@ public class ChatListener {
     }
 
     public static void onPlayerChat(PlayerChatEvent event) {
-        var chatFilterConfigurationProvider = ProviderRegistry.chatFilterConfigurationProvider;
+        var configProvider = ProviderRegistry.chatFilterConfigurationProvider;
         PlayerRef sender = event.getSender();
-        if (handleChatFiltering(event, sender, chatFilterConfigurationProvider)) {
+
+        if (handleChatFiltering(event, sender, configProvider)) {
             event.setCancelled(true);
-            return; // return if true, this means the msg should be blocked
+            return;
         }
 
-        var groups = new HashSet<>(PermissionsModule.get().getGroupsForUser(sender.getUuid()));
-        if (groups.stream().noneMatch(c -> c.equals("Default"))) {
-            groups.add("Default");
-        }
+        String prefix = getPlayerPrefix(sender.getUuid());
+        String displayName = getPlayerDisplayName(sender.getUuid(), sender.getUsername());
+        
+        boolean allowColor = configProvider.getConfig().allowUsersToUseChatColorCodes;
+        boolean canEmbed = configProvider.getConfig().allowUsersToEmbedLinks || 
+                         PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
+
+        event.setFormatter((player, message) -> Message.join(
+                Message.raw(prefix),
+                Message.raw(displayName),
+                Message.raw(": "),
+                allowColor ? ColorUtils.parseColorCodes(message, canEmbed) : Message.raw(message)));
+    }
+
+    static String getPlayerPrefix(java.util.UUID uuid) {
+        var groups = new HashSet<>(PermissionsModule.get().getGroupsForUser(uuid));
+        groups.add("Default");
 
         var groupManager = ProviderRegistry.groupManagerProvider;
+        var highestGroup = groupManager.getHighestWeightedGroup(groups);
+        
+        return groupManager.getGroupPrefix(highestGroup.first()).getAnsiMessage();
+    }
 
-        // get highest weighted group
-        var highestWeightedGroup = groupManager.getHighestWeightedGroup(groups);
-        var prefix = groupManager.getGroupPrefix(highestWeightedGroup.first());
-
-        // check if user has nickname
+    static String getPlayerDisplayName(java.util.UUID uuid, String username) {
         var nicknameProvider = ProviderRegistry.nicknameProvider;
-        var displayName = sender.getUsername();
-
-        if (nicknameProvider.hasNickname(sender.getUuid().toString())) {
-            displayName = nicknameProvider.getUserNickname(sender.getUuid().toString());
+        if (nicknameProvider != null && nicknameProvider.hasNickname(uuid.toString())) {
+            return nicknameProvider.getUserNickname(uuid.toString());
         }
-
-        String finalDisplayName = displayName;
-
-        boolean shouldEmbedLinks = chatFilterConfigurationProvider.getConfig().allowUsersToEmbedLinks || PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
-
-        event.setFormatter((_, message) -> Message.join(
-                prefix,
-                Message.raw(finalDisplayName),
-                Message.raw(": "),
-                chatFilterConfigurationProvider.getConfig().allowUsersToUseChatColorCodes ? ColorUtils.parseColorCodes(message, shouldEmbedLinks) : Message.raw(message)));
+        return username;
     }
 
-    private static boolean handleChatFiltering(PlayerChatEvent event, PlayerRef sender, ChatFilterConfigurationProvider chatFilterConfigurationProvider) {
-        // regex for banned terms
-        var bannableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
+    static boolean handleChatFiltering(PlayerChatEvent event, PlayerRef sender, ChatFilterConfigurationProvider configProvider) {
+        String content = event.getContent();
 
-        var chatContent = event.getContent();
-
-        if (handleBannableTerms(event, bannableTerms, chatContent, sender)) return true;
-
-        var removableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
-        if (handleRemovableTerms(event, removableTerms, chatContent, sender)) return true;
-
-        var censorableTerms = chatFilterConfigurationProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
-
-        for (var regex : censorableTerms) {
-            chatContent = regex.matcher(chatContent).replaceAll("****");
+        // 1. Check bannable terms
+        var bannable = configProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.BANNABLE);
+        if (containsAny(content, bannable)) {
+            banPlayerForBannedWord(sender);
+            return true;
         }
 
-        event.setContent(chatContent);
+        // 2. Check removable terms
+        var removable = configProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.REMOVABLE);
+        if (containsAny(content, removable)) {
+            sender.sendMessage(Message.translation("server.averageessentials.filter.restrictedword"));
+            return true;
+        }
+
+        // 3. Censor terms
+        var censorable = configProvider.getConfig().GetTermsAsRegexPatterns(ChatFilterType.CENSORABLE);
+        for (var pattern : censorable) {
+            content = pattern.matcher(content).replaceAll("****");
+        }
+
+        event.setContent(content);
         return false;
     }
 
-    private static boolean handleRemovableTerms(PlayerChatEvent event, ArrayList<Pattern> removableTerms, String chatContent, PlayerRef sender) {
-        for (var regex : removableTerms) {
-            if (regex.matcher(chatContent).find()) {
-                sender.sendMessage(Message.translation("server.averageessentials.filter.restrictedword"));
-                event.setCancelled(true);
+    private static boolean containsAny(String content, ArrayList<Pattern> patterns) {
+        for (var pattern : patterns) {
+            if (pattern.matcher(content).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean handleBannableTerms(PlayerChatEvent event, ArrayList<Pattern> bannableTerms, String chatContent, PlayerRef sender) {
-        for (var regex : bannableTerms) {
-            if (regex.matcher(chatContent).find()) {
-                event.setCancelled(true);
-                InfiniteBan ban = new InfiniteBan(sender.getUuid(),
-                        sender.getWorldUuid(),
-                        Instant.now(),
-                        Message.translation("server.averageessentials.ban.forusingbannedword").getAnsiMessage());
+    private static void banPlayerForBannedWord(PlayerRef sender) {
+        InfiniteBan ban = new InfiniteBan(sender.getUuid(),
+                sender.getWorldUuid(),
+                Instant.now(),
+                Message.translation("server.averageessentials.ban.forusingbannedword").getAnsiMessage());
 
-                banProvider.modify((banMap) -> {
-                    banMap.put(sender.getUuid(), ban);
-                    return true;
-                });
+        banProvider.modify(banMap -> {
+            banMap.put(sender.getUuid(), ban);
+            return true;
+        });
 
-                if (sender.isValid()) {
-                    // disconnect
-                    var disconnectReason = ban.getDisconnectReason(sender.getUuid());
-
-                    disconnectReason.whenComplete((_reason, disconnectEx) -> {
-                        var disconnectReasonMsg = _reason;
-
-                        if (disconnectEx != null) {
-                            throw new RuntimeException(disconnectEx);
-                        }
-
-                        if (disconnectReasonMsg.isEmpty()) {
-                            disconnectReasonMsg = Optional.of("You have been banned from the server.");
-                        }
-
-                        sender.getPacketHandler().disconnect(disconnectReasonMsg.get());
-                    });
-                }
-
-                return true;
-            }
+        if (sender.isValid()) {
+            sender.getPacketHandler().disconnect(
+                Message.translation("server.averageessentials.ban.forusingbannedword").getAnsiMessage()
+            );
         }
-        return false;
     }
 }

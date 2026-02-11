@@ -137,15 +137,13 @@ public class HomeCommand extends AbstractCommandCollection {
                     return;
                 }
 
-                Message homeListBuilder = Message.translation("server.commands.averageessentials.home.list.header");
-
+                Message homeList = Message.translation("server.commands.averageessentials.home.list.header");
                 for (PlayerHome home : playerHomes) {
-                    homeListBuilder = Message.join(homeListBuilder, Message.raw("\n- "), Message.raw(home.homeName));
+                    homeList = Message.join(homeList, Message.raw("\n- "), Message.raw(home.homeName));
                 }
 
-                commandContext.sendMessage(homeListBuilder);
+                commandContext.sendMessage(homeList);
             } catch (Exception e) {
-                e.printStackTrace();
                 commandContext.sendMessage(Message.translation("server.averageessentials.err.somethingwentwrong"));
             }
         }
@@ -164,23 +162,20 @@ public class HomeCommand extends AbstractCommandCollection {
             var playerUuid = commandContext.sender().getUuid();
             var homeName = homeNameArg.get(commandContext);
 
-            // get position of playyer
             var player = Universe.get().getPlayer(playerUuid);
-            var pos = Objects.requireNonNull(player).getTransform().getPosition();
+            if (player == null) return;
 
-            // check if a home with the same name exists for the user
+            var pos = player.getTransform().getPosition();
             var homeProvider = AverageEssentials.databaseService.getTable(PlayerHome.class);
 
             try {
-                var homeQuery = homeProvider.queryBuilder()
+                var home = homeProvider.queryBuilder()
                         .where().eq("playerUUID", playerUuid.toString())
                         .and()
-                        .eq("homeName", homeName);
-
-                var home = homeQuery.queryForFirst();
+                        .eq("homeName", homeName)
+                        .queryForFirst();
 
                 if (home != null) {
-                    // modify the position to new pos
                     home.setPosition(pos);
                     home.setHeadRotation(player.getHeadRotation());
                     home.worldUuid = player.getWorldUuid().toString();
@@ -190,29 +185,12 @@ public class HomeCommand extends AbstractCommandCollection {
                     return;
                 }
 
-                // create a new home
-                var homeCount = homeProvider.queryForEq("playerUUID", playerUuid.toString()).size();
+                // Check home limit
+                int homeCount = homeProvider.queryForEq("playerUUID", playerUuid.toString()).size();
+                int maxHomes = getPlayerMaxHomes(playerUuid);
 
-                var userGroups = PermissionsModule.get().getGroupsForUser(playerUuid).stream();
-                var defaultMaxHomes = ProviderRegistry.homeProvider.getConfig().defaultMaxHomes;
-
-                var permissionsProvider = PermissionsModule.get().getFirstPermissionProvider();
-                var userPermissions = permissionsProvider.getUserPermissions(playerUuid);
-
-                Pattern limitPattern = Pattern.compile("averageessentials\\.homes\\.limit\\.(\\d+)");
-                int userHomeAmountEntitlement = userPermissions.stream()
-                        .map(limitPattern::matcher)
-                        .filter(Matcher::matches)
-                        .mapToInt(m -> Integer.parseInt(m.group(1)))
-                        .max()
-                        .orElse(defaultMaxHomes);
-
-                if (userGroups.anyMatch(g -> g.equals(HytalePermissionsProvider.OP_GROUP))) {
-                    userHomeAmountEntitlement = Integer.MAX_VALUE;
-                }
-
-                if (homeCount >= userHomeAmountEntitlement) {
-                    commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.set.maxhomes").param("maxHomes", String.valueOf(userHomeAmountEntitlement)));
+                if (homeCount >= maxHomes) {
+                    commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.set.maxhomes").param("maxHomes", String.valueOf(maxHomes)));
                     return;
                 }
 
@@ -228,7 +206,24 @@ public class HomeCommand extends AbstractCommandCollection {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
 
+        private int getPlayerMaxHomes(UUID playerUuid) {
+            var userGroups = PermissionsModule.get().getGroupsForUser(playerUuid);
+            if (userGroups.contains(HytalePermissionsProvider.OP_GROUP)) {
+                return Integer.MAX_VALUE;
+            }
+
+            int defaultMaxHomes = ProviderRegistry.homeProvider.getConfig().defaultMaxHomes;
+            var userPermissions = PermissionsModule.get().getFirstPermissionProvider().getUserPermissions(playerUuid);
+
+            Pattern limitPattern = Pattern.compile("averageessentials\\.homes\\.limit\\.(\\d+)");
+            return userPermissions.stream()
+                    .map(limitPattern::matcher)
+                    .filter(Matcher::matches)
+                    .mapToInt(m -> Integer.parseInt(m.group(1)))
+                    .max()
+                    .orElse(defaultMaxHomes);
         }
     }
 }

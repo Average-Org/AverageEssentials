@@ -26,72 +26,60 @@ public class NicknameCommand extends CommandBase {
 
     @Override
     protected void executeSync(@NonNullDecl CommandContext commandContext) {
-        String nicknameOrPlayerName = nicknameOrPlayerArg.get(commandContext);
-        String otherNickname = nicknameIfPlayerArg.get(commandContext);
+        String targetName = nicknameOrPlayerArg.get(commandContext);
+        String optionalNickname = nicknameIfPlayerArg.get(commandContext);
 
-        // If trying to set another user's nickname
-        if (otherNickname != null) {
-            var player = Universe.get().getPlayerByUsername(nicknameOrPlayerName, NameMatching.EXACT_IGNORE_CASE);
-
-            if (player == null || !player.isValid()) {
-                commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.playernotfound").param("player", nicknameOrPlayerName));
-                return;
-            }
-
-            if (otherNickname.equalsIgnoreCase("clear")) {
-                ProviderRegistry.nicknameProvider.setUserNickname(player.getUuid().toString(), player.getUsername());
-                try {
-                    ProviderRegistry.nicknameProvider.applyNickname(player.getUuid().toString());
-                } catch (NoSuchFieldException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-                commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.clearedother").param("player", player.getUsername()));
-                return;
-            }
-
-            ProviderRegistry.nicknameProvider.setUserNickname(player.getUuid().toString(), otherNickname);
-            try {
-                ProviderRegistry.nicknameProvider.applyNickname(player.getUuid().toString());
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-            commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.changedother").param("player", player.getUsername()).param("nickname", otherNickname));
-            return;
+        if (optionalNickname != null) {
+            handleOtherPlayerNickname(commandContext, targetName, optionalNickname);
+        } else {
+            handleOwnNickname(commandContext, targetName);
         }
+    }
 
-        // If trying to set own nickname
-        var player = Universe.get().getPlayer(commandContext.sender().getUuid());
-
+    private void handleOtherPlayerNickname(CommandContext context, String targetName, String nickname) {
+        var player = Universe.get().getPlayerByUsername(targetName, NameMatching.EXACT_IGNORE_CASE);
         if (player == null || !player.isValid()) {
-            commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.playernotfound").param("player", nicknameOrPlayerName));
+            context.sendMessage(Message.translation("server.commands.averageessentials.nickname.playernotfound").param("player", targetName));
             return;
         }
 
-        if (nicknameOrPlayerName.equalsIgnoreCase("clear")) {
-            ProviderRegistry.nicknameProvider.setUserNickname(player.getUuid().toString(), player.getUsername());
-            try {
-                ProviderRegistry.nicknameProvider.applyNickname(player.getUuid().toString());
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-            commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.cleared"));
+        boolean isClear = nickname.equalsIgnoreCase("clear");
+        String finalNickname = isClear ? player.getUsername() : nickname;
+        
+        updateAndApplyNickname(player.getUuid().toString(), finalNickname);
+        
+        String translationKey = isClear ? "server.commands.averageessentials.nickname.clearedother" : "server.commands.averageessentials.nickname.changedother";
+        var msg = Message.translation(translationKey).param("player", player.getUsername());
+        if (!isClear) msg.param("nickname", nickname);
+        
+        context.sendMessage(msg);
+    }
+
+    private void handleOwnNickname(CommandContext context, String nickname) {
+        var player = Universe.get().getPlayer(context.sender().getUuid());
+        if (player == null || !player.isValid()) {
+            context.sendMessage(Message.translation("server.commands.averageessentials.nickname.playernotfound").param("player", "you"));
             return;
         }
 
-        ProviderRegistry.nicknameProvider.setUserNickname(player.getUuid().toString(), nicknameOrPlayerName);
+        boolean isClear = nickname.equalsIgnoreCase("clear");
+        String finalNickname = isClear ? player.getUsername() : nickname;
+
+        updateAndApplyNickname(player.getUuid().toString(), finalNickname);
+
+        String translationKey = isClear ? "server.commands.averageessentials.nickname.cleared" : "server.commands.averageessentials.nickname.changed";
+        var msg = Message.translation(translationKey);
+        if (!isClear) msg.param("nickname", nickname);
+
+        context.sendMessage(msg);
+    }
+
+    private void updateAndApplyNickname(String uuid, String nickname) {
+        ProviderRegistry.nicknameProvider.setUserNickname(uuid, nickname);
         try {
-            ProviderRegistry.nicknameProvider.applyNickname(player.getUuid().toString());
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+            ProviderRegistry.nicknameProvider.applyNickname(uuid);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        commandContext.sendMessage(Message.translation("server.commands.averageessentials.nickname.changed").param("nickname", nicknameOrPlayerName));
     }
 }

@@ -8,6 +8,12 @@ plugins {
 group = "github.renderbr.hytale"
 version = "0.2.8"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -18,14 +24,19 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    compileOnly("com.hypixel.hytale:Server:2026.01.27-734d39026")
+    val hytaleServer = "com.hypixel.hytale:Server:2026.01.27-734d39026"
+    compileOnly(hytaleServer)
+    testImplementation(hytaleServer)
     implementation(files("libs/AverageHytaleCore.jar"))
     implementation("org.slf4j:slf4j-simple:2.0.12")
 }
 
 tasks.test {
     useJUnitPlatform()
+    systemProperty("net.bytebuddy.experimental", "true")
 }
 
 tasks.shadowJar {
