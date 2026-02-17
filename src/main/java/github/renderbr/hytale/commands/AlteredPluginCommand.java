@@ -8,13 +8,13 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.HytaleServerConfig;
-import com.hypixel.hytale.server.core.HytaleServerConfig.ModConfig;
 import com.hypixel.hytale.server.core.command.system.ParseResult;
 import com.hypixel.hytale.server.core.command.system.arguments.system.FlagArg;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.SingleArgumentType;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractCommandCollection;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
+import com.hypixel.hytale.server.core.config.ModConfig;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.plugin.PluginBase;
 import com.hypixel.hytale.server.core.plugin.PluginManager;
@@ -102,7 +102,7 @@ public class AlteredPluginCommand extends AbstractCommandCollection {
             if (identifier != null) {
                 boolean onlyBootList = (Boolean) this.bootFlag.get(context);
                 HytaleServerConfig serverConfig = HytaleServer.get().getConfig();
-                ModConfig.setBoot(serverConfig, identifier, true);
+                HytaleServerConfig.setBoot(serverConfig, identifier, true);
                 if (serverConfig.consumeHasChanged()) {
                     HytaleServerConfig.save(serverConfig).join();
                 }
@@ -160,7 +160,7 @@ public class AlteredPluginCommand extends AbstractCommandCollection {
             if (identifier != null) {
                 boolean onlyBootList = (Boolean) this.bootFlag.get(context);
                 HytaleServerConfig serverConfig = HytaleServer.get().getConfig();
-                ModConfig.setBoot(serverConfig, identifier, false);
+                HytaleServerConfig.setBoot(serverConfig, identifier, false);
                 if (serverConfig.consumeHasChanged()) {
                     HytaleServerConfig.save(serverConfig).join();
                 }

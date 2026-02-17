@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "github.renderbr.hytale"
-version = "0.2.8.1"
+version = "0.2.9"
 
 java {
     toolchain {
@@ -27,7 +27,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    val hytaleServer = "com.hypixel.hytale:Server:2026.01.27-734d39026"
+    val hytaleServer = "com.hypixel.hytale:Server:2026.02.17-255364b8e"
     compileOnly(hytaleServer)
     testImplementation(hytaleServer)
     implementation(files("libs/AverageHytaleCore.jar"))

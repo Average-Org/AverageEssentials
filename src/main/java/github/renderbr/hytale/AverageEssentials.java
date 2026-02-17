@@ -3,7 +3,6 @@ package github.renderbr.hytale;
 
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import github.renderbr.hytale.config.InformationalMessageProvider;
 import github.renderbr.hytale.db.models.PlayerHome;
 import github.renderbr.hytale.db.models.regions.PlayerRegionChunk;
 import github.renderbr.hytale.db.models.regions.PlayerRegionCommandData;

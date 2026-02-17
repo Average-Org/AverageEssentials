@@ -58,7 +58,7 @@ public class RegionBoundaryService {
                 if (player == null) return;
 
                 tryRenderRegionsForPlayer(player);
-            } catch(Exception e){
+            } catch (Exception e) {
                 logger.atSevere().withCause(e).log("Failed to render regions for player %s".formatted(playerUuid));
             }
         });
@@ -66,11 +66,11 @@ public class RegionBoundaryService {
 
     public static void tryRenderRegionsForPlayer(PlayerRef playerRef) throws SQLException {
 
-        if(!playerRef.isValid()){
+        if (!playerRef.isValid()) {
             return;
         }
 
-        if(playerRef.getWorldUuid() == null){
+        if (playerRef.getWorldUuid() == null) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class RegionBoundaryService {
                 RegionService.getInstance().updateRegionGroup(region.regionGroup);
             }
 
-            DisplayDebug displayDebug = new DisplayDebug(DebugShape.Cube, region.getMatrix(), PlayerRegionGroup.hexToVector3f(region.regionGroup.boundaryColor), 1.0f, false, null);
+            DisplayDebug displayDebug = new DisplayDebug(DebugShape.Cube, region.getMatrix(), PlayerRegionGroup.hexToVector3f(region.regionGroup.boundaryColor), 1.0f, false, null, 0.5f);
             playerRef.getPacketHandler().write(displayDebug);
         }
     }
@@ -102,8 +102,8 @@ public class RegionBoundaryService {
                 if (playerRef == null) continue;
 
                 playerRef.getPacketHandler().write(new ClearDebugShapes());
-            } catch (Exception var4) {
-                logger.atSevere().withCause(var4).log("Failed to clear debug shapes for player %s".formatted(uuid));
+            } catch (Exception exception) {
+                logger.atSevere().withCause(exception).log("Failed to clear debug shapes for player %s".formatted(uuid));
             }
         }
 
