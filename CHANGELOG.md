@@ -2,6 +2,10 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.10] - 2026-02-17
+- **Fixed DB saving**
+    - Resolved an issue where data was not being saved to the database properly.
+
 ## [0.2.9] - 2026-02-17
 - **Hytale Update 3 Support**
     - Updated plugin compatibility with the latest Hytale Server API changes, resolving breaking changes

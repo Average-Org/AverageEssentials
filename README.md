@@ -42,15 +42,10 @@
 
 ## Installation
 
-1. Download the latest release JAR (version 0.2.8.1) from the releases section.
+1. Download the latest release JAR (version 0.2.10) from the releases section.
 2. Place the JAR file in your server's plugins directory.
 3. Restart the server to load the plugin.
 4. Configure groups, messages, broadcasts, home limits, link embedding, and other settings via the generated JSON config files in `mods/AverageEssentials/`.
-
-### New in v0.2.9
-- **Supports the latest Hytale API version!**
-- **Resolved previous bug regarding semantic versioning.**
-- **Region zones are now somewhat transparent.**
 
 ## Configuration
 
