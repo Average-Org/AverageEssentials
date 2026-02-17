@@ -2,6 +2,12 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.9] - 2026-02-17
+- **Hytale Update 3 Support**
+    - Updated plugin compatibility with the latest Hytale Server API changes, resolving breaking changes
+- **Respecting Hytale's semantic versioning**
+    - Updated plugin version to 0.2.9, as 0.2.8.1 apparently broke the plugin.
+
 ## [0.2.8.1] - 2026-02-10
 
 ### Refactor & Cleanup
