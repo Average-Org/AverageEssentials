@@ -64,6 +64,7 @@ public class RegionService {
         regionGroup.playerUuid = playerUuid;
         regionGroup.groupName = groupName;
         getRegionGroupTable().create(regionGroup);
+        AverageEssentials.databaseService.save();
         return regionGroup;
     }
 
@@ -74,6 +75,7 @@ public class RegionService {
 
     public void createRegionChunk(PlayerRegionChunk regionChunk) throws SQLException {
         getRegionChunkTable().create(regionChunk);
+        AverageEssentials.databaseService.save();
     }
 
     public List<PlayerRegionChunk> getIntersectingRegionsFromRect(RegionZone zone, String worldUuid) throws SQLException {
@@ -111,6 +113,7 @@ public class RegionService {
             data = new PlayerRegionCommandData();
             data.playerUuid = playerUuid;
             getRegionCommandDataTable().create(data);
+            AverageEssentials.databaseService.save();
         }
 
         return data;
@@ -128,6 +131,7 @@ public class RegionService {
         data.currentSelectedRegion = regionGroup;
 
         getRegionCommandDataTable().update(data);
+        AverageEssentials.databaseService.save();
     }
 
     @Nullable
@@ -185,6 +189,7 @@ public class RegionService {
         share.playerUuid = playerUuidToShare;
 
         AverageEssentials.databaseService.getTable(PlayerRegionGroupShare.class).create(share);
+        AverageEssentials.databaseService.save();
     }
 
     public void unshareRegionFromPlayer(PlayerRegionGroup region, String playerUuidToUnshare) throws SQLException {
@@ -215,6 +220,7 @@ public class RegionService {
 
         // Delete the chunk
         getRegionChunkTable().delete(chunk);
+        AverageEssentials.databaseService.save();
     }
 
     public void deleteRegionGroup(PlayerRegionGroup region) throws SQLException {
@@ -226,10 +232,12 @@ public class RegionService {
 
         // Delete the region group
         getRegionGroupTable().delete(region);
+        AverageEssentials.databaseService.save();
     }
 
     public void updateRegionGroup(PlayerRegionGroup region) throws SQLException {
         getRegionGroupTable().update(region);
+        AverageEssentials.databaseService.save();
     }
 
     private int calculateClaimedBlocks(PlayerRegionChunk chunk) {

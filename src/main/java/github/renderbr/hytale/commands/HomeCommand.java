@@ -57,6 +57,7 @@ public class HomeCommand extends AbstractCommandCollection {
                 }
 
                 homeProvider.delete(home);
+                AverageEssentials.databaseService.save();
                 commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.delete.success").param("home", homeName));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -181,6 +182,7 @@ public class HomeCommand extends AbstractCommandCollection {
                     home.worldUuid = player.getWorldUuid().toString();
 
                     homeProvider.update(home);
+                    AverageEssentials.databaseService.save();
                     commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.set.success").param("home", homeName));
                     return;
                 }
@@ -202,6 +204,7 @@ public class HomeCommand extends AbstractCommandCollection {
                 newHome.setPosition(pos);
 
                 homeProvider.create(newHome);
+                AverageEssentials.databaseService.save();
                 commandContext.sendMessage(Message.translation("server.commands.averageessentials.home.set.success").param("home", homeName));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
