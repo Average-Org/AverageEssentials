@@ -33,13 +33,13 @@ public class UseBlockEventHandler extends EntityEventSystem<EntityStore, UseBloc
             return;
         }
 
-        if(player.hasPermission("averageessentials.region.bypass")){
+        if(playerRef.hasPermission("averageessentials.region.bypass")){
             return;
         }
 
         try {
             var region = RegionService.getInstance()
-                    .getRegionChunkAtPosition(useBlockEvent.getTargetBlock().toVector3d(), playerRef.getWorldUuid().toString());
+                    .getRegionChunkAtPosition(useBlockEvent.getTargetBlock(), playerRef.getWorldUuid().toString());
 
             if(region == null){
                 return;
@@ -47,7 +47,7 @@ public class UseBlockEventHandler extends EntityEventSystem<EntityStore, UseBloc
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), false, false, true, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("server.averageessentials.region.usingdenied"));
+                playerRef.sendMessage(Message.translation("server.averageessentials.region.usingdenied"));
                 useBlockEvent.setCancelled(true);
             }
 

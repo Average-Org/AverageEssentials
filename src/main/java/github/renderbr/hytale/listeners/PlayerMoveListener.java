@@ -1,24 +1,10 @@
 package github.renderbr.hytale.listeners;
 
-import com.hypixel.hytale.component.spatial.SpatialResource;
-import com.hypixel.hytale.event.EventRegistry;
-import com.hypixel.hytale.protocol.DebugShape;
 import com.hypixel.hytale.protocol.Packet;
-import com.hypixel.hytale.protocol.Vector3f;
-import com.hypixel.hytale.protocol.packets.buildertools.BuilderToolGeneralAction;
-import com.hypixel.hytale.protocol.packets.buildertools.BuilderToolSelectionUpdate;
 import com.hypixel.hytale.protocol.packets.player.ClientMovement;
-import com.hypixel.hytale.protocol.packets.player.DisplayDebug;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.event.events.player.PlayerEvent;
 import com.hypixel.hytale.server.core.io.PacketHandler;
 import com.hypixel.hytale.server.core.io.adapter.PacketAdapters;
 import com.hypixel.hytale.server.core.io.handlers.game.GamePacketHandler;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.Universe;
-import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
-import com.hypixel.hytale.server.core.util.NotificationUtil;
-import github.renderbr.hytale.db.models.regions.PlayerRegionGroup;
 import github.renderbr.hytale.db.models.regions.service.RegionService;
 import util.ColorUtils;
 

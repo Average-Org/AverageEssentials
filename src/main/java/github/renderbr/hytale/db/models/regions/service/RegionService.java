@@ -1,6 +1,5 @@
 package github.renderbr.hytale.db.models.regions.service;
 
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
@@ -13,6 +12,8 @@ import github.renderbr.hytale.db.models.regions.PlayerRegionGroup;
 import github.renderbr.hytale.db.models.regions.PlayerRegionGroupShare;
 import github.renderbr.hytale.db.models.regions.param.RegionZone;
 import github.renderbr.hytale.registries.ProviderRegistry;
+import org.joml.Vector3d;
+import org.joml.Vector3i;
 import util.ColorUtils;
 
 import javax.annotation.Nullable;
@@ -91,7 +92,7 @@ public class RegionService {
         return getIntersectingRegionsFromRect(RegionZone.getFromPosition(pos, 4), worldUuid);
     }
 
-    public PlayerRegionChunk getRegionChunkAtPosition(Vector3d pos, String worldUuid) throws SQLException {
+    public PlayerRegionChunk getRegionChunkAtPosition(Vector3i pos, String worldUuid) throws SQLException {
         return getRegionChunkTable().queryBuilder()
                 .where()
                 .le("firstCornerX", (int) pos.x).and().ge("secondCornerX", (int) pos.x).and()

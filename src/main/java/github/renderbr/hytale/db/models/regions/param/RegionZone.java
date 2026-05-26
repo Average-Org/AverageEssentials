@@ -1,6 +1,7 @@
 package github.renderbr.hytale.db.models.regions.param;
 
-import com.hypixel.hytale.math.vector.Vector3d;
+
+import org.joml.Vector3d;
 
 public class RegionZone {
     public int firstCornerX;

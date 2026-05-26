@@ -1,9 +1,10 @@
 package github.renderbr.hytale.db.models;
 
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 @DatabaseTable(tableName = "player_homes")
 public class PlayerHome {
@@ -39,23 +40,23 @@ public class PlayerHome {
     public int headRotZ;
 
     public void setPosition(Vector3d position){
-        this.positionX = (int) position.getX();
-        this.positionY = (int) position.getY();
-        this.positionZ = (int) position.getZ();
+        this.positionX = (int) position.x();
+        this.positionY = (int) position.y();
+        this.positionZ = (int) position.z();
     }
 
-    public void setHeadRotation(Vector3f rotation){
-        this.headRotX = (int) rotation.getX();
-        this.headRotY = (int) rotation.getY();
-        this.headRotZ = (int) rotation.getZ();
+    public void setHeadRotation(Rotation3f rotation){
+        this.headRotX = (int) rotation.x();
+        this.headRotY = (int) rotation.y();
+        this.headRotZ = (int) rotation.z();
     }
 
     public Vector3d getPosition(){
         return new Vector3d(positionX, positionY, positionZ);
     }
 
-    public Vector3f getHeadRotation(){
-        return new Vector3f(headRotX, headRotY, headRotZ);
+    public Rotation3f getHeadRotation(){
+        return new Rotation3f(headRotX, headRotY, headRotZ);
     }
 
     public PlayerHome(){}

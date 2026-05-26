@@ -1,8 +1,8 @@
 package github.renderbr.hytale.db.models.regions;
 
-import com.hypixel.hytale.math.vector.Vector3f;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.joml.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -91,7 +91,7 @@ public class PlayerRegionGroup {
         return String.format("#%06X", ThreadLocalRandom.current().nextInt(0xFFFFFF + 1));
     }
 
-    public static com.hypixel.hytale.protocol.Vector3f hexToVector3f(String hexColor) {
+    public static Vector3f hexToVector3f(String hexColor) {
         String cleanHex = hexColor.replace("#", "").replace("0x", "");
 
         int color = Integer.parseInt(cleanHex, 16);
@@ -100,6 +100,6 @@ public class PlayerRegionGroup {
         float g = (float) ((color >> 8) & 0xFF);
         float b = (float) (color & 0xFF);
 
-        return new com.hypixel.hytale.protocol.Vector3f(r / 255.0f, g / 255.0f, b / 255.0f);
+        return new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f);
     }
 }

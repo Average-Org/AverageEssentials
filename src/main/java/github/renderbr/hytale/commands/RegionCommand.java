@@ -3,7 +3,6 @@ package github.renderbr.hytale.commands;
 import com.hypixel.hytale.builtin.adventure.farming.states.TilledSoilBlock;
 import com.hypixel.hytale.builtin.buildertools.commands.SetCommand;
 import com.hypixel.hytale.common.collection.Flag;
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.Hitbox;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.NameMatching;
@@ -28,6 +27,7 @@ import github.renderbr.hytale.db.models.regions.param.RegionZone;
 import github.renderbr.hytale.db.models.regions.service.RegionService;
 import github.renderbr.hytale.service.RegionBoundaryService;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.joml.Vector3d;
 import util.CommandUtils;
 
 import java.awt.*;

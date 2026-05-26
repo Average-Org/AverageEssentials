@@ -32,13 +32,13 @@ public class BreakBlockEventHandler extends EntityEventSystem<EntityStore, Break
             return;
         }
 
-        if(player.hasPermission("averageessentials.region.bypass")){
+        if(playerRef.hasPermission("averageessentials.region.bypass")){
             return;
         }
 
         try {
             var region = RegionService.getInstance()
-                    .getRegionChunkAtPosition(breakBlockEvent.getTargetBlock().toVector3d(), playerRef.getWorldUuid().toString());
+                    .getRegionChunkAtPosition(breakBlockEvent.getTargetBlock(), playerRef.getWorldUuid().toString());
 
             if(region == null){
                 return;
@@ -46,7 +46,7 @@ public class BreakBlockEventHandler extends EntityEventSystem<EntityStore, Break
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), true, false, false, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
+                playerRef.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
                 breakBlockEvent.setCancelled(true);
             }
 

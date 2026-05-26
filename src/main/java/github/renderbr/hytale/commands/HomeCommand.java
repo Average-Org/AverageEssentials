@@ -15,7 +15,6 @@ import github.renderbr.hytale.registries.ProviderRegistry;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

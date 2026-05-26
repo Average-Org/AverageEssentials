@@ -31,13 +31,13 @@ public class PlaceBlockEventHandler extends EntityEventSystem<EntityStore, Place
             return;
         }
 
-        if(player.hasPermission("averageessentials.region.bypass")){
+        if(playerRef.hasPermission("averageessentials.region.bypass")){
             return;
         }
 
         try {
             var region = RegionService.getInstance()
-                    .getRegionChunkAtPosition(placeBlockEvent.getTargetBlock().toVector3d(), playerRef.getWorldUuid().toString());
+                    .getRegionChunkAtPosition(placeBlockEvent.getTargetBlock(), playerRef.getWorldUuid().toString());
 
             if(region == null){
                 return;
@@ -45,7 +45,7 @@ public class PlaceBlockEventHandler extends EntityEventSystem<EntityStore, Place
 
             if (!RegionService.getInstance().canInteract(region.regionGroup, playerRef.getUuid().toString(), false, true, false, false)) {
                 // cancel event
-                player.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
+                playerRef.sendMessage(Message.translation("server.averageessentials.region.buildingdenied"));
                 placeBlockEvent.setCancelled(true);
             }
 

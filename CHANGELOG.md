@@ -2,9 +2,13 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.12] - 2026-05-26
+- **Updated to Hytale Patch 5**.
+- Swapped Hytale vectors to JOML vectors.
+- Fixed a bug where using nickname command would throw an error.
+
 ## [0.2.11] - 2026-03-29
 -- **Updated to Hytale Patch 4**
-
 
 ## [0.2.10] - 2026-02-17
 - **Fixed DB saving**

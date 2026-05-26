@@ -11,6 +11,7 @@ import github.renderbr.hytale.service.RegionBoundaryService;
 import util.ColorUtils;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class PlayerJoinListener {
     public static void register(EventRegistry eventRegistry) {
@@ -20,9 +21,9 @@ public class PlayerJoinListener {
 
     public static void onPlayerJoin(PlayerReadyEvent event) {
         if (!ProviderRegistry.informationalMessageProvider.config.welcomeMessage.isBlank()) {
-            var player = event.getPlayer();
+            var player = Objects.requireNonNull(event.getPlayerRef().getStore().getComponent(event.getPlayerRef(), PlayerRef.getComponentType()));
             var welcomeMessage = ColorUtils.parseColorCodes(ProviderRegistry.informationalMessageProvider.config.welcomeMessage
-                    .replace("{player}", player.getDisplayName()));
+                    .replace("{player}", player.getUsername()));
 
             player.sendMessage(welcomeMessage);
         }
