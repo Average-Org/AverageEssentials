@@ -1,9 +1,11 @@
 package github.renderbr.hytale.service;
 
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.DebugFlags;
 import com.hypixel.hytale.protocol.DebugShape;
 import com.hypixel.hytale.protocol.packets.player.ClearDebugShapes;
 import com.hypixel.hytale.protocol.packets.player.DisplayDebug;
+import com.hypixel.hytale.server.core.modules.debug.DebugUtils;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import github.renderbr.hytale.db.models.regions.PlayerRegionGroup;
@@ -88,7 +90,14 @@ public class RegionBoundaryService {
                 RegionService.getInstance().updateRegionGroup(region.regionGroup);
             }
 
-            DisplayDebug displayDebug = new DisplayDebug(DebugShape.Cube, region.getMatrix(), PlayerRegionGroup.hexToVector3f(region.regionGroup.boundaryColor), 1.0f, false, null, 0.5f);
+            DisplayDebug displayDebug = new DisplayDebug(
+                    DebugShape.Cube,
+                    region.getMatrix(),
+                    PlayerRegionGroup.hexToVector3f(region.regionGroup.boundaryColor),
+                    1.0f,
+                    (byte) DebugUtils.FLAG_FADE,
+                    null,
+                    0.5f);
             playerRef.getPacketHandler().write(displayDebug);
         }
     }

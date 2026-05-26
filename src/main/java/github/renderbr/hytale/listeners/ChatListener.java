@@ -48,10 +48,10 @@ public class ChatListener {
 
         String prefix = getPlayerPrefix(sender.getUuid());
         String displayName = getPlayerDisplayName(sender.getUuid(), sender.getUsername());
-        
+
         boolean allowColor = configProvider.getConfig().allowUsersToUseChatColorCodes;
-        boolean canEmbed = configProvider.getConfig().allowUsersToEmbedLinks || 
-                         PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
+        boolean canEmbed = configProvider.getConfig().allowUsersToEmbedLinks ||
+                PermissionsModule.get().hasPermission(sender.getUuid(), "averageessentials.chat.embedlinks");
 
         event.setFormatter((player, message) -> Message.join(
                 Message.raw(prefix),
@@ -66,7 +66,7 @@ public class ChatListener {
 
         var groupManager = ProviderRegistry.groupManagerProvider;
         var highestGroup = groupManager.getHighestWeightedGroup(groups);
-        
+
         return groupManager.getGroupPrefix(highestGroup.first()).getAnsiMessage();
     }
 
@@ -127,7 +127,7 @@ public class ChatListener {
 
         if (sender.isValid()) {
             sender.getPacketHandler().disconnect(
-                Message.translation("server.averageessentials.ban.forusingbannedword").getAnsiMessage()
+                    Message.translation("server.averageessentials.ban.forusingbannedword")
             );
         }
     }

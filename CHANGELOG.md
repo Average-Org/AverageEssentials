@@ -2,6 +2,10 @@
 
 All notable changes to AverageEssentials will be documented in this file.
 
+## [0.2.11] - 2026-03-29
+-- **Updated to Hytale Patch 4**
+
+
 ## [0.2.10] - 2026-02-17
 - **Fixed DB saving**
     - Resolved an issue where data was not being saved to the database properly.
